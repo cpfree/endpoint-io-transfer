@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="DEBUG">
+    <Appenders>
+        <!-- 这个就是自定义的Appender -->
+        <JTextAreaAppender name="textArea">
+            <PatternLayout pattern="[%-5p] - %m%n" />
+        </JTextAreaAppender>
+
+        <!--这个输出控制台的配置，这里输出除了warn和error级别的信息到System.out -->
+        <Console name="console_out_appender" target="SYSTEM_OUT">
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
+            <!-- 输出日志的格式 -->
+            <PatternLayout pattern="[%p] %d{yyyy-MM-dd HH:mm:ss} (%F:%L) %m%n" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <logger name="com.github.cpfniliu" level="DEBUG"/>
+        <Logger name="cn.cpf" level="DEBUG"/>
+
+        <root level="DEBUG">
+            <AppenderRef ref="console_out_appender" />
+            <AppenderRef ref="textArea" />
+        </root>
+    </Loggers>
+
+</Configuration>
+
+
+
+
+
+
