@@ -1,6 +1,13 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.comp.JPathTextField;
+import cn.cpf.app.comp.PauseableThread;
+import cn.cpf.app.util.BdmpOutUtils;
+import cn.cpf.app.util.OsUtils;
 import com.github.cpfniliu.bdmp.BdmpHandle;
+import com.github.cpfniliu.common.ext.hub.LazySingleton;
+import com.github.cpfniliu.common.ext.hub.SimpleCode;
+import com.github.cpfniliu.common.thread.AsynchronousProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * <b>Description : </b>
@@ -81,7 +90,8 @@ public class PixelPanel extends JPanel {
             }
         });
 
-        tfPath = new JTextField();
+
+        tfPath = new JPathTextField();
 
         boardPanel = new JPanel();
         boardPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -92,6 +102,68 @@ public class PixelPanel extends JPanel {
         boardPanel.add(btnOpen, BorderLayout.WEST);
         boardPanel.add(tfPath, BorderLayout.CENTER);
         add(boardPanel, BorderLayout.NORTH);
+
+        final JPanel scanPanel = getScanPanel();
+        add(scanPanel, BorderLayout.SOUTH);
+    }
+
+    private static PauseableThread pauseableThread;
+
+    public static final String saveDirPath = "D:\\Users\\CPF\\Desktop\\out\\realtime\\";
+
+    public static AsynchronousProcessor<BufferedImage> processor;
+
+    private static LazySingleton<Robot> robotSinTon;
+
+    private static boolean test(BufferedImage image) {
+        try {
+            BdmpOutUtils.convertBinPicToFile(image, saveDirPath);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private JPanel getScanPanel() {
+        robotSinTon = LazySingleton.of(() -> SimpleCode.runtimeException(() -> new Robot(), "创建Robot对象失败"));
+        processor = new AsynchronousProcessor<>(PixelPanel::test);
+        processor.start();
+        pauseableThread = PauseableThread.builder().booleanSupplier(() -> {
+            try {
+                final BufferedImage mainScreenShot = OsUtils.getMainScreenShot(robotSinTon.instance());
+                processor.add(mainScreenShot);
+                return true;
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }).millisecond(2000).build();
+
+        JButton startButton = new JButton("开始扫描");
+        startButton.addActionListener((e) -> {
+            pauseableThread.start();
+            log.info("startButton");
+        });
+        JButton scanButton = new JButton("wake扫描");
+        scanButton.addActionListener((e) -> {
+            pauseableThread.wake();
+            log.info("wake");
+        });
+        JButton pauseScanBtn = new JButton("暂停扫描");
+        pauseScanBtn.addActionListener((e) -> {
+            pauseableThread.pause();
+            log.info("pause");
+        });
+        JPanel jPanel = new JPanel();
+        jPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jPanel.setLayout(new BorderLayout(0, 0));
+        jPanel.setBackground(null);
+        jPanel.setOpaque(false);
+        jPanel.add(startButton, BorderLayout.WEST);
+        jPanel.add(scanButton, BorderLayout.CENTER);
+        jPanel.add(pauseScanBtn, BorderLayout.EAST);
+        return jPanel;
     }
 
 }

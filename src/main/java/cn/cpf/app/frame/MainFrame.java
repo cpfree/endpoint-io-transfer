@@ -1,6 +1,8 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.util.LogUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +24,8 @@ public class MainFrame extends JFrame {
      * Launch the application.
      */
     public static void main(String[] args) {
+        LogUtils.setFlag(1);
+        PluginManager.addPackage("cn.cpf.app.comp.JTextAreaAppender");
         EventQueue.invokeLater(() -> {
             try {
                 MainFrame frame = new MainFrame();
@@ -36,6 +40,12 @@ public class MainFrame extends JFrame {
      * Create the frame.
      */
     public MainFrame() {
+        try {
+            Class.forName("cn.cpf.app.comp.JTextAreaAppender");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         setTitle("ext-tool");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

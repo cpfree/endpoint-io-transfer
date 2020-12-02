@@ -39,7 +39,7 @@ public class BdmpOutUtils {
             LogUtils.printWarning("未发现像素图片");
             return false;
         }
-        System.out.println("picRecInfo ==> \n" + picRecInfo);
+        LogUtils.printDebug("picRecInfo ==> {}" + picRecInfo);
         boolean check = picRecInfo.check();
         if (!check) {
             LogUtils.printWarning("转换文件失败, MD5值不一样");
@@ -102,14 +102,15 @@ public class BdmpOutUtils {
         if (!(saveDirPath.endsWith("\\") && saveDirPath.endsWith("/"))) {
             saveDirPath += File.separator;
         }
-        LogUtils.printSuccess("转换文件成功!");
+        LogUtils.printSuccess("转换文件成功! ==> {}", fileName);
         IoUtils.insureFileDirExist(new File(saveDirPath));
         // 写入文件
-        LogUtils.printInfo("准备写入文件");
-        try (FileOutputStream outputStream = new FileOutputStream(new File(saveDirPath + fileName))){
+        LogUtils.printDebug("准备写入文件");
+        final String savePath = saveDirPath + fileName;
+        try (FileOutputStream outputStream = new FileOutputStream(new File(savePath))){
             outputStream.write(content);
         }
-        LogUtils.printSuccess("写入文件成功");
+        LogUtils.printSuccess("写入文件成功 ==> {}", savePath);
         return true;
     }
 

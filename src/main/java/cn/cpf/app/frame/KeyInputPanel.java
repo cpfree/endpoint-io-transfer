@@ -1,6 +1,7 @@
 package cn.cpf.app.frame;
 
 import cn.cpf.app.comp.JField;
+import cn.cpf.app.comp.JPathTextField;
 import com.github.cpfniliu.common.ext.hub.LazySingleton;
 import com.github.cpfniliu.common.ext.hub.SimpleCode;
 import com.github.cpfniliu.common.thread.AsynchronousProcessor;
@@ -38,7 +39,7 @@ public class KeyInputPanel extends JPanel {
     private JButton btnRead = new JButton("read");
 
     @Getter
-    private JTextField tfPath = new JTextField();
+    private JTextField tfPath = new JPathTextField();
 
     @Getter
     private JButton btnStart = new JButton("start print");

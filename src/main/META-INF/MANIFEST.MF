@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: cn.cpf.app.frame.MainFrame
-Class-Path: commons-beanutils-20030211.134440.jar commons-lang3-3.7.jar 
- lombok-1.18.12.jar log4j-core-2.13.2.jar slf4j-api-1.7.30.jar tool-1.0.
- jar gson-2.8.6.jar log4j-jul-2.13.2.jar spring-boot-starter-log4j2-2.3.
- 0.RELEASE.jar bdmp-core-1.0.jar jul-to-slf4j-1.7.30.jar common-lang-1.3
- .jar log4j-api-2.13.2.jar log4j-slf4j-impl-2.13.2.jar
-
