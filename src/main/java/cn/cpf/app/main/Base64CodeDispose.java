@@ -13,7 +13,6 @@ import java.util.Arrays;
  * @author CPF
  * @date 2020/11/17
  **/
-@SuppressWarnings("java:S106")
 public class Base64CodeDispose {
 
     public static void main(String[] args) throws IOException {

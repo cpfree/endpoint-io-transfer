@@ -28,7 +28,7 @@ public class RealTimeScanScreenShot {
 
     static {
         robotSinTon = LazySingleton.of(() -> SimpleCode.runtimeException(() -> new Robot(), "创建Robot对象失败"));
-        processor = new AsynchronousProcessor<>(RealTimeScanScreenShot::test);
+        processor = AsynchronousProcessor.ofPredicate(RealTimeScanScreenShot::test);
         processor.start();
     }
 
@@ -39,7 +39,7 @@ public class RealTimeScanScreenShot {
 
     private static boolean test(BufferedImage image) {
         try {
-            BdmpOutUtils.convertBinPicToFile(image, saveDirPath);
+            BdmpOutUtils.convertBinPicToFile(image, saveDirPath, false);
             return true;
         } catch (IOException e) {
             e.printStackTrace();

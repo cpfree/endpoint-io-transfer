@@ -208,7 +208,7 @@ public class KeyInputPanel extends JPanel {
                 new Thread(() -> {
                     KeyPressDecorator instance = robotLazySingleton.instance();
                     AsynchronousProcessor<Character> asynchronousProcessor = instance.getAsynchronousProcessor();
-                    asynchronousProcessor.resume();
+                    asynchronousProcessor.wake();
                     asynchronousProcessor.setMillisecond(intervalTime);
                     // 打印之前等待5秒, 为了找寻打印的焦点
                     SimpleCode.runtimeException(() -> Thread.sleep(sleepTime));
@@ -246,7 +246,7 @@ public class KeyInputPanel extends JPanel {
                 new Thread(() -> {
                     SimpleCode.runtimeException(() -> Thread.sleep(sleepTime));
                     asynchronousProcessor.setMillisecond(intervalTime);
-                    asynchronousProcessor.resume();
+                    asynchronousProcessor.wake();
                     log.debug( "{} :: 线程已经被唤醒", Thread.currentThread().getName());
                 }).start();
                 btnStop.setText("pause");

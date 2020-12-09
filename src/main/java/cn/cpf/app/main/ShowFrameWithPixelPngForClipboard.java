@@ -1,9 +1,9 @@
 package cn.cpf.app.main;
 
 import cn.cpf.app.frame.ImageSlideShowFrame;
-import cn.cpf.app.util.CommandLineArgs;
 import cn.cpf.app.util.OsUtils;
 import com.github.cpfniliu.bdmp.*;
+import com.github.cpfniliu.common.helper.CommandLineHelper;
 import sun.awt.datatransfer.DataTransferer;
 
 import java.awt.*;
@@ -23,11 +23,11 @@ public class ShowFrameWithPixelPngForClipboard {
 
     public static void main(String[] args) throws IOException {
         // 获取参数
-        final CommandLineArgs lineArgs = CommandLineArgs.analyze(args);
-        final int rowPxNum = lineArgs.getDefaultKeyVal("r", 920);
-        final int pxSideLen = lineArgs.getDefaultKeyVal("px", 2);
-        final int margin = lineArgs.getDefaultKeyVal("m", 20);
-        final int powerOf2 = lineArgs.getDefaultKeyVal("p2", 8);
+        final CommandLineHelper lineArgs = CommandLineHelper.parse(args);
+        final int rowPxNum = lineArgs.getDefaultParam("r", 920);
+        final int pxSideLen = lineArgs.getDefaultParam("px", 2);
+        final int margin = lineArgs.getDefaultParam("m", 20);
+        final int powerOf2 = lineArgs.getDefaultParam("p2", 8);
         // 获取粘贴板
         final Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         final Transferable contents = systemClipboard.getContents(null);

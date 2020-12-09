@@ -22,7 +22,10 @@ public class MainFramePanel extends JPanel {
     @Getter
     private JPanel keyInPane;
     @Getter
-    private JPanel boardPanel;
+    private JPanel runtimeScanPane;
+    @Getter
+    private JPanel pixelPane;
+
     /**
      * Create the panel.
      */
@@ -31,6 +34,7 @@ public class MainFramePanel extends JPanel {
         // 透明
         this.setBackground(null);
         this.setOpaque(false);
+
         // tab 选项卡
         tabbedPane = new JTabbedPane();
         String[] tabNames = {"keyIn", "picRecognize"};
@@ -40,10 +44,15 @@ public class MainFramePanel extends JPanel {
         keyInPane.setOpaque(false);
         tabbedPane.addTab(tabNames[0], keyInPane);
 
-        boardPanel = new PixelPanel();
-        boardPanel.setBackground(null);
-        boardPanel.setOpaque(false);
-        tabbedPane.addTab(tabNames[1], boardPanel);
+        pixelPane = new PixelPanel();
+        pixelPane.setBackground(null);
+        pixelPane.setOpaque(false);
+        tabbedPane.addTab(tabNames[1], pixelPane);
+
+        runtimeScanPane = new RuntimeScanPanel();
+        runtimeScanPane.setBackground(null);
+        runtimeScanPane.setOpaque(false);
+        tabbedPane.addTab(tabNames[1], runtimeScanPane);
 
         add(tabbedPane, BorderLayout.CENTER);
 

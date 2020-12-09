@@ -6,6 +6,7 @@ import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 
 /**
  * <b>Description : </b>
@@ -59,5 +60,6 @@ public class MainFrame extends JFrame {
         contentPane.setVisible(true);
         setContentPane(contentPane);
     }
+
 
 }

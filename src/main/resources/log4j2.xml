@@ -15,10 +15,12 @@
     </Appenders>
 
     <Loggers>
-<!--        <logger name="com.github.cpfniliu" level="DEBUG"/>-->
-<!--        <Logger name="cn.cpf" level="DEBUG"/>-->
+        <logger name="com.github.cpfniliu" level="DEBUG"/>
+        <Logger name="cn.cpf" level="DEBUG"/>
+
         <Root level="all">
             <AppenderRef ref="TextArea"/>
+<!--            <AppenderRef ref="Console"/>-->
         </Root>
     </Loggers>
 
