@@ -1,11 +1,12 @@
 package cn.cpf.app.pixel;
 
-import com.github.cpfniliu.common.util.io.IoUtils;
+import com.github.cosycode.common.util.io.IoUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Logger;
@@ -24,11 +25,12 @@ public class PaneFrame extends JFrame {
 
     public PaneFrame() {
 
-        try {
+        try (final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("info.html")) {
             newsPane = new JEditorPane(new URL(newsURL));
-            final String s = IoUtils.readFile("P:\\git\\my-swing-app\\pixel-dot-matrix-pic\\src\\main\\resources\\info.html");
+            assert resourceAsStream != null;
+            final String string = IoUtils.readStringFromInputStream(resourceAsStream);
             newsPane.setContentType("text/html");
-            newsPane.setText(s);
+            newsPane.setText(string);
         } catch (Exception e) {
             e.printStackTrace();
         }

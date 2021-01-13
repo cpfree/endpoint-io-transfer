@@ -1,8 +1,8 @@
 package cn.cpf.app.main;
 
-import cn.cpf.app.util.OsUtils;
 import cn.cpf.app.util.BdmpOutUtils;
-import com.github.cpfniliu.bdmp.BdmpUtils;
+import cn.cpf.app.util.OsUtils;
+import com.github.cosycode.bdmp.BdmpUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

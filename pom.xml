@@ -12,19 +12,18 @@
     <dependencies>
         <dependency>
             <groupId>com.github.cosycode</groupId>
+            <artifactId>common-lang</artifactId>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cosycode</groupId>
             <artifactId>bit-data-map</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.github.cpfniliu</groupId>
-            <artifactId>tool</artifactId>
-            <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.cpfniliu</groupId>
-                    <artifactId>common-lang</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.github.cosycode</groupId>
+            <artifactId>extend-mod</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.cosycode</groupId>
@@ -34,8 +33,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
-            <scope>compile</scope>
+            <version>1.18.16</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -50,4 +49,18 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <!--告诉 maven, 在打包时, 要打包 resource 下的文件-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.html</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>

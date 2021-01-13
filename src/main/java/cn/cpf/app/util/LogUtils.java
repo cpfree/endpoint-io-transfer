@@ -19,7 +19,10 @@ public class LogUtils {
      * 1: log, 0: 控制台
      */
     @Setter
-    private static int flag;
+    private static boolean logFlag;
+
+    @Setter
+    private static Level logLevel = Level.DEBUG;
 
     public static void printDebug(String s, Object... objects) {
         print(Level.DEBUG, s, objects);
@@ -43,24 +46,44 @@ public class LogUtils {
 
     @SuppressWarnings("java:S106")
     public static void print(Level level, String s, Object... objects) {
-        if (flag > 0) {
-            switch (level) {
-                case DEBUG:
-                    log.debug(s, objects);
-                    break;
-                case INFO:
-                    log.info(s, objects);
-                    break;
-                case WARN:
-                    log.warn(s, objects);
-                    break;
-                case ERROR:
-                    log.error(s, objects);
-                    break;
-                default:
-            }
-        } else {
-            System.out.println(level.name() + " ==> " + StrUtils.format(s, objects));
+        switch (level) {
+            case DEBUG:
+                if (logLevel.toInt() <= Level.DEBUG.toInt()) {
+                    if (logFlag) {
+                        log.debug(s, objects);
+                    } else {
+                        System.out.println(level.name() + " ==> " + StrUtils.format(s, objects));
+                    }
+                }
+                break;
+            case INFO:
+                if (logLevel.toInt() <= Level.INFO.toInt()) {
+                    if (logFlag) {
+                        log.info(s, objects);
+                    } else {
+                        System.out.println(level.name() + " ==> " + StrUtils.format(s, objects));
+                    }
+                }
+                break;
+            case WARN:
+                if (logLevel.toInt() <= Level.WARN.toInt()) {
+                    if (logFlag) {
+                        log.warn(s, objects);
+                    } else {
+                        System.out.println(level.name() + " ==> " + StrUtils.format(s, objects));
+                    }
+                }
+                break;
+            case ERROR:
+                if (logLevel.toInt() <= Level.ERROR.toInt()) {
+                    if (logFlag) {
+                        log.error(s, objects);
+                    } else {
+                        System.out.println(level.name() + " ==> " + StrUtils.format(s, objects));
+                    }
+                }
+                break;
+            default:
         }
     }
 

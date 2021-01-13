@@ -1,10 +1,11 @@
 package cn.cpf.app.util;
 
-import com.github.cpfniliu.bdmp.BdmpHeader;
-import com.github.cpfniliu.bdmp.BdmpRecInfo;
-import com.github.cpfniliu.bdmp.BdmpRecognizer;
-import com.github.cpfniliu.bdmp.BdmpSource;
-import com.github.cpfniliu.common.util.io.IoUtils;
+import com.github.cosycode.bdmp.BdmpHeader;
+import com.github.cosycode.bdmp.BdmpRecInfo;
+import com.github.cosycode.bdmp.BdmpRecognizer;
+import com.github.cosycode.bdmp.BdmpSource;
+import com.github.cosycode.common.ext.bean.DoubleBean;
+import com.github.cosycode.common.util.io.IoUtils;
 import sun.awt.datatransfer.DataTransferer;
 
 import java.awt.*;
@@ -34,7 +35,8 @@ public class BdmpOutUtils {
      * @return 是否成功
      */
     public static boolean convertBinPicToSource(BufferedImage image, String saveDirPath) throws IOException {
-        return convertBinPicToType(image, null, saveDirPath, true);
+        final DoubleBean<Boolean, BdmpHeader> headerDoubleBean = convertBinPicToType(image, null, saveDirPath, true);
+        return headerDoubleBean != null && headerDoubleBean.getO1();
     }
 
     /**
@@ -45,7 +47,8 @@ public class BdmpOutUtils {
      * @return 是否成功
      */
     public static boolean convertBinPicToFile(BufferedImage image, String saveDirPath, boolean isOverWrite) throws IOException {
-        return convertBinPicToType(image, BdmpSource.SourceType.TYPE_FILE, saveDirPath, isOverWrite);
+        final DoubleBean<Boolean, BdmpHeader> headerDoubleBean = convertBinPicToType(image, BdmpSource.SourceType.TYPE_FILE, saveDirPath, isOverWrite);
+        return headerDoubleBean != null && headerDoubleBean.getO1();
     }
 
     /**
@@ -55,29 +58,30 @@ public class BdmpOutUtils {
      * @param sourceType  转换的内容解析输出方式
      * @param saveDirPath 如果转换的内容是文件, 则解析后的文件存储路径
      * @param isOverWrite 如果解析后的内容是文件, 且文件已存在, 则是否覆盖
-     * @return 是否正确转换
+     * @return &lt;是否写入成功, 正确转换则返回转换的信息实体&gt;，否则返回null
      * @throws IOException
      */
-    public static boolean convertBinPicToType(BufferedImage image, BdmpSource.SourceType sourceType, String saveDirPath, boolean isOverWrite) throws IOException {
+    public static DoubleBean<Boolean, BdmpHeader> convertBinPicToType(BufferedImage image, BdmpSource.SourceType sourceType, String saveDirPath, boolean isOverWrite) throws IOException {
         // 确保存储的文件夹存在
         final BdmpRecInfo picRecInfo = BdmpRecognizer.resolver(image);
         if (picRecInfo == null) {
             LogUtils.printWarning("未发现像素图片");
-            return false;
+            return null;
         }
         LogUtils.printDebug("picRecInfo ==> {}" + picRecInfo);
         boolean check = picRecInfo.check();
         if (!check) {
             LogUtils.printWarning("转换文件失败, MD5值不一样");
-            return false;
+            return null;
         }
         final BdmpHeader bdmpHeader = picRecInfo.getBdmpHeader();
         final BdmpSource.SourceType type = Optional.ofNullable(sourceType).orElse(BdmpSource.SourceType.valueOf(bdmpHeader.getType()));
         switch (type) {
             case TYPE_FILE:
-                return writeFile(saveDirPath, bdmpHeader.getTag(), picRecInfo.getFileContent(), isOverWrite);
+                final boolean b = writeFile(saveDirPath, bdmpHeader.getTag(), picRecInfo.getFileContent(), isOverWrite);
+                return DoubleBean.of(b, bdmpHeader);
             case TYPE_CONTENT:
-                return false;
+                return DoubleBean.of(false, bdmpHeader);
             case TYPE_CLIPBOARD:
                 final String tag = bdmpHeader.getTag();
                 final DataFlavor suitableFlavor = OsUtils.getSuitableFlavor(tag);
@@ -90,7 +94,7 @@ public class BdmpOutUtils {
                     throw new RuntimeException("不支持的 translateBytes 类型: ");
                 }
         }
-        return true;
+        return DoubleBean.of(false, bdmpHeader);
     }
 
     /**

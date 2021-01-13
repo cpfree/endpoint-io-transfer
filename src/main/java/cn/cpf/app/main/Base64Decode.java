@@ -1,7 +1,7 @@
 package cn.cpf.app.main;
 
 import cn.cpf.app.util.LogUtils;
-import com.github.cpfniliu.common.helper.CommandLineHelper;
+import com.github.cosycode.common.helper.CommandLineHelper;
 
 import java.io.*;
 import java.nio.file.FileSystemException;

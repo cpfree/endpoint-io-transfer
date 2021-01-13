@@ -2,9 +2,9 @@ package cn.cpf.app.main;
 
 import cn.cpf.app.frame.ImageSlideShowFrame;
 import cn.cpf.app.util.LogUtils;
-import com.github.cpfniliu.bdmp.BdmpHandle;
-import com.github.cpfniliu.common.helper.CommandLineHelper;
-import com.github.cpfniliu.common.util.io.FileSystemUtils;
+import com.github.cosycode.bdmp.BdmpHandle;
+import com.github.cosycode.common.helper.CommandLineHelper;
+import com.github.cosycode.common.util.io.FileSystemUtils;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;

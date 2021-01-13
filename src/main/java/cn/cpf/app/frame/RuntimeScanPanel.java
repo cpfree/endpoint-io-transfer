@@ -1,13 +1,19 @@
 package cn.cpf.app.frame;
 
 import cn.cpf.app.comp.JPathTextField;
+import cn.cpf.app.comp.StandardTable;
+import cn.cpf.app.global.ConfigHelper;
 import cn.cpf.app.util.BdmpOutUtils;
 import cn.cpf.app.util.OsUtils;
-import com.github.cpfniliu.common.base.SupplierWithThrow;
-import com.github.cpfniliu.common.ext.hub.LazySingleton;
-import com.github.cpfniliu.common.ext.hub.SimpleCode;
-import com.github.cpfniliu.common.thread.AsynchronousProcessor;
-import com.github.cpfniliu.common.thread.CtrlLoopThreadComp;
+import com.github.cosycode.bdmp.BdmpHeader;
+import com.github.cosycode.bdmp.BdmpSource;
+import com.github.cosycode.common.base.SupplierWithThrow;
+import com.github.cosycode.common.ext.bean.DoubleBean;
+import com.github.cosycode.common.ext.bean.Record;
+import com.github.cosycode.common.ext.hub.LazySingleton;
+import com.github.cosycode.common.ext.hub.SimpleCode;
+import com.github.cosycode.common.thread.AsynchronousProcessor;
+import com.github.cosycode.common.thread.CtrlLoopThreadComp;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +24,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * <b>Description : </b>
@@ -31,36 +39,56 @@ public class RuntimeScanPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private JPanel boardPanel;
+    private final JPanel boardPanel;
 
     @Getter
-    private JButton btnOpen;
+    private final JButton btnOpen;
 
     @Getter
-    private JButton btnConvert;
-
-    public static final String saveDirPath = "D:\\Users\\CPF\\Desktop\\out\\realtime\\";
+    private final JButton btnConvert;
 
     @Getter
-    private final JTextField outPath = new JPathTextField(saveDirPath);
+    private final JTextField outPath = new JPathTextField(ConfigHelper.getScanSaveDirPath());
 
-    public final transient AsynchronousProcessor<BufferedImage> processor = AsynchronousProcessor.ofPredicate(image -> {
-        try {
-            String text = outPath.getText();
-            if (StringUtils.isBlank(text) || !new File(text).isDirectory()) {
-                text = saveDirPath;
-                outPath.setText(saveDirPath);
-            }
-            BdmpOutUtils.convertBinPicToFile(image, text, false);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+    private final transient LazySingleton<StandardTable<Record>> tableLazySingleton = LazySingleton.of(() -> {
+        final StandardTable<Record> standardTable = new StandardTable<>();
+        standardTable.setColumnConfigList(Arrays.asList(
+                new StandardTable.ColumnConfig("tag", "名称"),
+                new StandardTable.ColumnConfig("length", "长度"),
+                new StandardTable.ColumnConfig("deTime", "解析时间"),
+                new StandardTable.ColumnConfig("path", "路径")
+        ));
+        return standardTable;
     });
 
+    public final transient AsynchronousProcessor<BufferedImage> processor = AsynchronousProcessor.ofConsumer((BufferedImage image) -> {
+        String text = outPath.getText();
+        if (StringUtils.isBlank(text) || !new File(text).isDirectory()) {
+            text = ConfigHelper.getScanSaveDirPath();
+            outPath.setText(text);
+        }
+        final String saveDir = text;
+        final DoubleBean<Boolean, BdmpHeader> booleanBdmpRecInfoDoubleBean = SimpleCode.runtimeException(() -> BdmpOutUtils.convertBinPicToType(image, BdmpSource.SourceType.TYPE_FILE, saveDir, false));
+        if (booleanBdmpRecInfoDoubleBean == null) {
+            return;
+        }
+        final Boolean o1 = booleanBdmpRecInfoDoubleBean.getO1();
+        if (o1 == null || !o1) {
+            // 没有写入成功
+            return;
+        }
+        // 写入成功
+        Record record = new Record();
+        final BdmpHeader bdmpHeader = booleanBdmpRecInfoDoubleBean.getO2();
+        record.put("tag", bdmpHeader.getTag());
+        record.put("length", bdmpHeader.getContentLength());
+        record.put("deTime", new Date());
+        record.put("path", saveDir);
+        tableLazySingleton.instance().add(record);
+    }).setName("异步图片识别线程");
 
-    private final transient LazySingleton<Robot> robotSinTon = LazySingleton.of(() -> SimpleCode.runtimeException((SupplierWithThrow<Robot, AWTException>) Robot::new, "创建Robot对象失败"));;
+
+    private final transient LazySingleton<Robot> robotSinTon = LazySingleton.of(() -> SimpleCode.runtimeException((SupplierWithThrow<Robot, AWTException>) Robot::new, "创建Robot对象失败"));
 
     private boolean booleanSupplier() {
         try {
@@ -73,7 +101,7 @@ public class RuntimeScanPanel extends JPanel {
         return false;
     }
 
-    private final transient CtrlLoopThreadComp ctrlLoopThreadComp = CtrlLoopThreadComp.ofSupplier(this::booleanSupplier, false, 1000);
+    private final transient CtrlLoopThreadComp ctrlLoopThreadComp = CtrlLoopThreadComp.ofSupplier(this::booleanSupplier).setName("实时截取主屏幕可控线程").setMillisecond(1000);
 
     /**
      * Create the panel.
@@ -100,7 +128,6 @@ public class RuntimeScanPanel extends JPanel {
 
         btnConvert = new JButton("打开输出文件夹");
         btnConvert.addActionListener(e -> {
-            log.debug("btnConvert click");
             String pathText = outPath.getText();
             if (StringUtils.isBlank(pathText)) {
                 return;
@@ -126,17 +153,19 @@ public class RuntimeScanPanel extends JPanel {
         boardPanel.add(btnConvert, BorderLayout.EAST);
         boardPanel.add(btnOpen, BorderLayout.WEST);
         boardPanel.add(outPath, BorderLayout.CENTER);
-        add(boardPanel, BorderLayout.NORTH);
 
         final JPanel scanPanel = getScanPanel();
+
+        add(boardPanel, BorderLayout.NORTH);
+        add(tableLazySingleton.instance(), BorderLayout.CENTER);
         add(scanPanel, BorderLayout.SOUTH);
     }
 
     private JPanel getScanPanel() {
-        processor.start();
 
         JButton startOrWakeButton = new JButton("实时扫描");
         startOrWakeButton.addActionListener(e -> {
+            processor.startOrWake();
             ctrlLoopThreadComp.startOrWake();
             log.info("实时扫描");
         });

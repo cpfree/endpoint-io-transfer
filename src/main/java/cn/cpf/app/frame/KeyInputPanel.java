@@ -2,11 +2,12 @@ package cn.cpf.app.frame;
 
 import cn.cpf.app.comp.JField;
 import cn.cpf.app.comp.JPathTextField;
-import com.github.cpfniliu.common.ext.hub.LazySingleton;
-import com.github.cpfniliu.common.ext.hub.SimpleCode;
-import com.github.cpfniliu.common.thread.AsynchronousProcessor;
-import com.github.cpfniliu.common.util.io.IoUtils;
-import com.github.cpfniliu.tool.robot.KeyPressDecorator;
+import com.github.cosycode.common.ext.hub.LazySingleton;
+import com.github.cosycode.common.ext.hub.SimpleCode;
+import com.github.cosycode.common.thread.AsynchronousProcessor;
+import com.github.cosycode.common.util.io.IoUtils;
+import com.github.cosycode.ext.se.robot.KeyPressDecorator;
+import com.github.cosycode.ext.se.util.DataConvertUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,41 +33,37 @@ public class KeyInputPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    @Getter
-    private JButton btnOpen = new JButton("open");
+    private final JButton btnOpen = new JButton("open");
+
+    private final JButton btnRead = new JButton("read");
+
+    private final JButton btnReadForBase64 = new JButton("BaseConvertRead");
 
     @Getter
-    private JButton btnRead = new JButton("read");
+    private final JTextField tfPath = new JPathTextField();
+
+    private final JButton btnStart = new JButton("start print");
+
+    private final JButton btnStop = new JButton("pause");
+
+    private final JButton btnClear = new JButton("清空");
 
     @Getter
-    private JTextField tfPath = new JPathTextField();
+    private final JField interval = new JField("interval");
 
     @Getter
-    private JButton btnStart = new JButton("start print");
+    private final JField prepareTime = new JField("prepareTime");
 
     @Getter
-    private JButton btnStop = new JButton("pause");
+    private final JField jfLength = new JField("length", true);
 
     @Getter
-    private JButton btnClear = new JButton("清空");
+    private final JField progress = new JField("progress", true);
 
     @Getter
-    private JField interval = new JField("interval");
+    private final JTextArea textArea = new JTextArea();
 
-    @Getter
-    private JField prepareTime = new JField("prepareTime");
-
-    @Getter
-    private JField jfLength = new JField("length", true);
-
-
-    @Getter
-    private JField progress = new JField("progress", true);
-
-    @Getter
-    private JTextArea textArea = new JTextArea();
-
-    private static LazySingleton<KeyPressDecorator> robotLazySingleton = LazySingleton.of(() -> {
+    private static final LazySingleton<KeyPressDecorator> robotLazySingleton = LazySingleton.of(() -> {
         try {
             return new KeyPressDecorator(new Robot());
         } catch (AWTException e) {
@@ -100,6 +97,8 @@ public class KeyInputPanel extends JPanel {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 5, 5, 5));
+        panel.add(btnRead);
+        panel.add(btnReadForBase64);
         panel.add(btnStart);
         panel.add(btnStop);
         panel.add(btnClear);
@@ -109,7 +108,6 @@ public class KeyInputPanel extends JPanel {
         boardPane.setLayout(new BorderLayout(0, 0));
         boardPane.setBackground(null);
         boardPane.setOpaque(false);
-        boardPane.add(btnRead, BorderLayout.EAST);
         boardPane.add(btnOpen, BorderLayout.WEST);
         boardPane.add(tfPath, BorderLayout.CENTER);
         boardPane.add(showPane, BorderLayout.NORTH);
@@ -118,6 +116,8 @@ public class KeyInputPanel extends JPanel {
         add(boardPane, BorderLayout.NORTH);
 
         textArea.setAutoscrolls(true);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
         JScrollPane jScrollPane = new JScrollPane(textArea);
         // 分别设置水平和垂直滚动条自动出现
         jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -142,8 +142,25 @@ public class KeyInputPanel extends JPanel {
             }
         });
 
+        btnReadForBase64.addActionListener(e -> {
+            String pathText = tfPath.getText();
+            if (StringUtils.isBlank(pathText)) {
+                return;
+            }
+            File file = new File(pathText);
+            if (!file.exists()) {
+                log.warn("文件不存在, 请检查路径是否正确");
+                return;
+            }
+            try {
+                final String text = DataConvertUtils.fileToBase64(file);
+                textArea.setText(text);
+            } catch (IOException ex) {
+                log.error("读取文件失败", ex);
+            }
+        });
+
         btnRead.addActionListener(e -> {
-            log.debug("btnConvert click");
             String pathText = tfPath.getText();
             if (StringUtils.isBlank(pathText)) {
                 return;
@@ -188,7 +205,7 @@ public class KeyInputPanel extends JPanel {
         });
 
         btnStart.addActionListener(e -> {
-            log.debug("准备打印, 请找寻焦点");
+            log.debug("准备打印, 请找寻焦点, 并将输入法调至英文");
             // 等待时间
             int sleepTime = prepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false, false));
             if (sleepTime < 2000 || sleepTime > 30000) {
@@ -202,7 +219,7 @@ public class KeyInputPanel extends JPanel {
                 return;
             }
 
-            final String text = textArea.getText().replaceAll("\r\n", "\n");
+            final String text = textArea.getText().replace("\r\n", "\n");
             int length = text.length();
             if (length > 0) {
                 new Thread(() -> {
@@ -214,12 +231,12 @@ public class KeyInputPanel extends JPanel {
                     SimpleCode.runtimeException(() -> Thread.sleep(sleepTime));
                     // 打印
                     instance.print(text);
-                    // 每隔 500 mm, 更新打印进度
+                    // 每隔 20 mm, 更新打印进度
                     BlockingQueue<Character> queue = asynchronousProcessor.getBlockingQueue();
                     while (!queue.isEmpty()) {
                         int size = queue.size();
                         progress.setText((length - size) + " / " + length);
-                        SimpleCode.runtimeException(() -> Thread.sleep(100));
+                        SimpleCode.runtimeException(() -> Thread.sleep(20));
                     }
                     progress.setText(length + " / " + length);
                     log.info( "{} :: 进度线程结束", Thread.currentThread().getName());

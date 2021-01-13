@@ -1,5 +1,6 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.global.ConfigHelper;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -18,13 +19,13 @@ public class MainFramePanel extends JPanel {
     @Getter
     private static final JTextPane jTextPane = new JTextPane();
     @Getter
-    private JTabbedPane tabbedPane;
+    private final JTabbedPane tabbedPane;
     @Getter
-    private JPanel keyInPane;
+    private final JPanel keyInPane;
     @Getter
-    private JPanel runtimeScanPane;
+    private final JPanel runtimeScanPane;
     @Getter
-    private JPanel pixelPane;
+    private final JPanel pixelPane;
 
     /**
      * Create the panel.
@@ -37,7 +38,7 @@ public class MainFramePanel extends JPanel {
 
         // tab 选项卡
         tabbedPane = new JTabbedPane();
-        String[] tabNames = {"keyIn", "picRecognize"};
+        String[] tabNames = {"keyIn", "picRecognize", "realtimeScanner"};
 
         keyInPane = new KeyInputPanel();
         keyInPane.setBackground(null);
@@ -52,11 +53,12 @@ public class MainFramePanel extends JPanel {
         runtimeScanPane = new RuntimeScanPanel();
         runtimeScanPane.setBackground(null);
         runtimeScanPane.setOpaque(false);
-        tabbedPane.addTab(tabNames[1], runtimeScanPane);
+        tabbedPane.addTab(tabNames[2], runtimeScanPane);
 
         add(tabbedPane, BorderLayout.CENTER);
 
         jTextPane.setAutoscrolls(true);
+        jTextPane.setBackground(ConfigHelper.getDefaultColor());
         JScrollPane jScrollPane = new JScrollPane(jTextPane);
 
         // 分别设置水平和垂直滚动条自动出现

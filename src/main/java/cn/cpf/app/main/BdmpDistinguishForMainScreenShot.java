@@ -1,7 +1,9 @@
 package cn.cpf.app.main;
 
-import cn.cpf.app.util.OsUtils;
+import cn.cpf.app.global.ConfigHelper;
 import cn.cpf.app.util.BdmpOutUtils;
+import cn.cpf.app.util.OsUtils;
+import com.github.cosycode.common.helper.CommandLineHelper;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,11 +17,11 @@ import java.io.IOException;
  **/
 public class BdmpDistinguishForMainScreenShot {
 
-    public static final String SAVE_DIR_PATH = "E:\\res\\FMBS_DEV_BANK\\inner\\clipout\\";
-
     public static void main(String[] args) throws AWTException, IOException {
+        CommandLineHelper commandLineHelper = CommandLineHelper.parse(args);
+        final String saveDirPath = commandLineHelper.getDefaultParam("p", ConfigHelper.getSavePath());
         final BufferedImage mainScreenShot = OsUtils.getMainScreenShot(null);
-        BdmpOutUtils.convertBinPicToSource(mainScreenShot, SAVE_DIR_PATH);
+        BdmpOutUtils.convertBinPicToSource(mainScreenShot, saveDirPath);
     }
 
 }

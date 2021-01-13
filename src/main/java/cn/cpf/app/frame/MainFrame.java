@@ -6,7 +6,6 @@ import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
 
 /**
  * <b>Description : </b>
@@ -25,7 +24,7 @@ public class MainFrame extends JFrame {
      * Launch the application.
      */
     public static void main(String[] args) {
-        LogUtils.setFlag(1);
+        LogUtils.setLogFlag(true);
         PluginManager.addPackage("cn.cpf.app.comp.JTextAreaAppender");
         EventQueue.invokeLater(() -> {
             try {
@@ -41,6 +40,7 @@ public class MainFrame extends JFrame {
      * Create the frame.
      */
     public MainFrame() {
+        LogUtils.setLogFlag(true);
         try {
             Class.forName("cn.cpf.app.comp.JTextAreaAppender");
         } catch (ClassNotFoundException e) {

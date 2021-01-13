@@ -2,8 +2,8 @@ package cn.cpf.app.main;
 
 import cn.cpf.app.frame.ImageSlideShowFrame;
 import cn.cpf.app.util.OsUtils;
-import com.github.cpfniliu.bdmp.*;
-import com.github.cpfniliu.common.helper.CommandLineHelper;
+import com.github.cosycode.bdmp.*;
+import com.github.cosycode.common.helper.CommandLineHelper;
 import sun.awt.datatransfer.DataTransferer;
 
 import java.awt.*;

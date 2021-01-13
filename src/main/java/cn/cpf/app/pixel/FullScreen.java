@@ -1,10 +1,10 @@
 package cn.cpf.app.pixel;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import cn.cpf.app.event.KeyReleasedListener;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class FullScreen {
 
@@ -55,7 +55,7 @@ public class FullScreen {
             exitButton.addActionListener(evt -> System.exit(1));
             jframe.add(exitButton);
             jframe.setLayout(new FlowLayout());
-            /**
+            /*
              * true无边框 全屏显示
              * false有边框 全屏显示
              */
@@ -71,25 +71,14 @@ public class FullScreen {
             JFrame jframe = new JFrame();
             JButton exitButton = new JButton("退出");
             exitButton.addActionListener(evt -> System.exit(1));
-            jframe.addKeyListener(new KeyListener() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                }
-
-                @Override
-                public void keyPressed(KeyEvent e) {
-                }
-
-                @Override
-                public void keyReleased(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                        System.exit(1);
-                    }
+            jframe.addKeyListener((KeyReleasedListener) e -> {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    System.exit(1);
                 }
             });
             jframe.add(exitButton);
             jframe.setLayout(new FlowLayout());
-            /**
+            /*
              * true无边框 全屏显示
              * false有边框 全屏显示
              */

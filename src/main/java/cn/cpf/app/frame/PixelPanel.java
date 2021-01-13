@@ -1,7 +1,7 @@
 package cn.cpf.app.frame;
 
 import cn.cpf.app.comp.JPathTextField;
-import com.github.cpfniliu.bdmp.BdmpHandle;
+import com.github.cosycode.bdmp.BdmpHandle;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,13 +23,13 @@ public class PixelPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private JPanel boardPanel;
+    private final JPanel boardPanel;
 
     @Getter
-    private JButton btnOpen;
+    private final JButton btnOpen;
 
     @Getter
-    private JButton btnConvert;
+    private final JButton btnConvert;
 
     @Getter
     private JTextField tfPath;

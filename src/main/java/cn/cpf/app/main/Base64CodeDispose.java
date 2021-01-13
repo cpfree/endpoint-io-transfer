@@ -1,7 +1,8 @@
 package cn.cpf.app.main;
 
-import com.github.cpfniliu.common.util.io.IoUtils;
-import com.github.cpfniliu.tool.util.DataConvertUtils;
+import cn.cpf.app.util.LogUtils;
+import com.github.cosycode.common.util.io.IoUtils;
+import com.github.cosycode.ext.se.util.DataConvertUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class Base64CodeDispose {
         if (args == null || args.length < 1) {
             throw new RuntimeException("参数不能为空");
         }
-        System.out.println(Arrays.toString(args));
+        LogUtils.printInfo(Arrays.toString(args));
         final String path = args[0];
         String savePath;
         if (args.length >= 2) {

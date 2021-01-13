@@ -66,8 +66,9 @@ public final class JTextAreaAppender extends AbstractAppender {
 
     @Override
     public void append(LogEvent event) {
+        //日志二进制文件，输出到指定位置就行
         try {
-            final byte[] bytes = getLayout().toByteArray(event);//日志二进制文件，输出到指定位置就行
+            final byte[] bytes = getLayout().toByteArray(event);
             Level level = event.getLevel();
             Style style = jTextPane.getStyle(level.name());
             Document document = jTextPane.getDocument();

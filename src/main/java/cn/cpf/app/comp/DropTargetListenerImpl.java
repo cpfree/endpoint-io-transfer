@@ -26,7 +26,6 @@ public interface DropTargetListenerImpl extends DropTargetListener {
     default void dropActionChanged(DropTargetDragEvent dtde) {
     }
 
-
     static List<File> getFileList(DropTargetDropEvent dtde) throws IOException, UnsupportedFlavorException {
         /*
          * 1. 文件: 判断拖拽目标是否支持文件列表数据（即拖拽的是否是文件或文件夹, 支持同时拖拽多个）
