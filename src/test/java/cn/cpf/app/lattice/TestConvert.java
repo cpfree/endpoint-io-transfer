@@ -1,16 +1,35 @@
 package cn.cpf.app.lattice;
 
+import com.github.cosycode.common.util.io.FileSystemUtils;
 import lombok.NonNull;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import static com.github.cosycode.common.util.io.IoUtils.insureFileExist;
 
 public class TestConvert {
 
     public static void main(String[] args) throws IOException {
-        System.out.println(charset(new File("D:\\Users\\CPF\\Desktop\\新建文本文档.txt")));
+        final File file = new File("C:\\Users\\Private\\read\\read-all\\read-creeper\\novel0");
+        FileSystemUtils.fileDisposeFromDir(file, f -> {
+            try {
+                final String charset = charset(f);
+                System.out.println(f.getName() + " " + charset);
+
+                if ("UTF-8".equals(charset)) {
+                    byte[] bytes = new byte[(int) file.length()];
+                    final int read = new FileInputStream(file).read(bytes);
+                    assert read != bytes.length;
+                    final String s1 = new String(bytes, StandardCharsets.UTF_8);
+                    final byte[] gbks = s1.getBytes("GBK");
+                    new FileOutputStream(file).write(gbks);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }, null);
     }
 
     /**

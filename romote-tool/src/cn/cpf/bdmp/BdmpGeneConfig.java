@@ -53,7 +53,6 @@ public class BdmpGeneConfig {
                 ", rowPixelCnt=" + rowPixelCnt +
                 ", pixelSideWidth=" + pixelSideWidth +
                 ", pixelSideHeight=" + pixelSideHeight +
-                ", mappingColor=" + Arrays.toString(mappingColor) +
                 ", marginLen=" + Arrays.toString(marginLen) +
                 '}';
     }
