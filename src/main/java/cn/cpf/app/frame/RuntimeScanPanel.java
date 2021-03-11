@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
- * <b>Description : </b>
+ * <b>Description : </b> 实时扫描面板
  *
  * @author CPF
  * Date: 2020/8/11 12:14
@@ -55,13 +55,14 @@ public class RuntimeScanPanel extends JPanel {
         standardTable.setColumnConfigList(Arrays.asList(
                 new StandardTable.ColumnConfig("tag", "名称"),
                 new StandardTable.ColumnConfig("length", "长度"),
-                new StandardTable.ColumnConfig("deTime", "解析时间"),
-                new StandardTable.ColumnConfig("path", "路径")
+                new StandardTable.ColumnConfig("deTime", "解析时间")
         ));
         return standardTable;
     });
 
-    public final transient AsynchronousProcessor<BufferedImage> processor = AsynchronousProcessor.ofConsumer((BufferedImage image) -> {
+    public final transient AsynchronousProcessor<BufferedImage> processor = AsynchronousProcessor.ofConsumer(this::distinguish).setName("异步图片识别线程");
+
+    private void distinguish(BufferedImage image) {
         String text = outPath.getText();
         if (StringUtils.isBlank(text) || !new File(text).isDirectory()) {
             text = ConfigHelper.getScanSaveDirPath();
@@ -85,23 +86,18 @@ public class RuntimeScanPanel extends JPanel {
         record.put("deTime", new Date());
         record.put("path", saveDir);
         tableLazySingleton.instance().add(record);
-    }).setName("异步图片识别线程");
-
+    }
 
     private final transient LazySingleton<Robot> robotSinTon = LazySingleton.of(() -> SimpleCode.runtimeException((SupplierWithThrow<Robot, AWTException>) Robot::new, "创建Robot对象失败"));
 
-    private boolean booleanSupplier() {
+    private final transient CtrlLoopThreadComp ctrlLoopThreadComp = CtrlLoopThreadComp.ofRunnable(() -> {
         try {
             final BufferedImage mainScreenShot = OsUtils.getMainScreenShot(robotSinTon.instance());
             processor.add(mainScreenShot);
-            return true;
         } catch (AWTException e) {
             e.printStackTrace();
         }
-        return false;
-    }
-
-    private final transient CtrlLoopThreadComp ctrlLoopThreadComp = CtrlLoopThreadComp.ofSupplier(this::booleanSupplier).setName("实时截取主屏幕可控线程").setMillisecond(1000);
+    }).setName("实时截取主屏幕可控线程").setMillisecond(1000);
 
     /**
      * Create the panel.
@@ -169,6 +165,16 @@ public class RuntimeScanPanel extends JPanel {
             ctrlLoopThreadComp.startOrWake();
             log.info("实时扫描");
         });
+        JButton singleScanButton = new JButton("单次扫描");
+        singleScanButton.addActionListener(e -> {
+            try {
+                final BufferedImage mainScreenShot = OsUtils.getMainScreenShot(robotSinTon.instance());
+                distinguish(mainScreenShot);
+            } catch (AWTException awtException) {
+                awtException.printStackTrace();
+            }
+            log.info("单次扫描");
+        });
         JButton pauseScanBtn = new JButton("暂停扫描");
         pauseScanBtn.addActionListener(e -> {
             ctrlLoopThreadComp.pause();
@@ -176,10 +182,11 @@ public class RuntimeScanPanel extends JPanel {
         });
         JPanel jPanel = new JPanel();
         jPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        jPanel.setLayout(new BorderLayout(0, 0));
+        jPanel.setLayout(new GridLayout(1, 5));
         jPanel.setBackground(null);
         jPanel.setOpaque(false);
-        jPanel.add(startOrWakeButton, BorderLayout.WEST);
+        jPanel.add(singleScanButton, BorderLayout.WEST);
+        jPanel.add(startOrWakeButton, BorderLayout.CENTER);
         jPanel.add(pauseScanBtn, BorderLayout.EAST);
         return jPanel;
     }

@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * <b>Description : </b>
+ * <b>Description : </b> 主窗口程序
  *
  * @author CPF
  * Date: 2020/8/11 11:29
@@ -47,7 +47,7 @@ public class MainFrame extends JFrame {
             e.printStackTrace();
         }
 
-        setTitle("ext-tool");
+        setTitle("EndPoint IO Transfer");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(400, 100, 800, 600);

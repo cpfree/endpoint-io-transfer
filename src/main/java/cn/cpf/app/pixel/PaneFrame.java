@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class PaneFrame extends JFrame {
 
     private JEditorPane newsPane;
-    private String newsURL = "http://m.baidu.com";
+    private String newsURL = "http://www.baidu.com";
 
     public PaneFrame() {
 
@@ -29,8 +29,8 @@ public class PaneFrame extends JFrame {
             newsPane = new JEditorPane(new URL(newsURL));
             assert resourceAsStream != null;
             final String string = IoUtils.readStringFromInputStream(resourceAsStream);
-            newsPane.setContentType("text/html");
-            newsPane.setText(string);
+//            newsPane.setContentType("text/html");
+//            newsPane.setText(string);
         } catch (Exception e) {
             e.printStackTrace();
         }

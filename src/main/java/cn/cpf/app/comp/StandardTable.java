@@ -17,6 +17,9 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
     private final JTable table;
 
     @Getter
+    private final JScrollPane scrollPane;
+
+    @Getter
     private final List<ColumnConfig> columnConfigList = new ArrayList<>();
 
     @Getter
@@ -26,12 +29,17 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
 
     public StandardTable() {
         table = new JTable(tableModel);
+
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setAutoscrolls(true);
         setLayout(new BorderLayout());
         // 把 表头 添加到容器顶部（使用普通的中间容器添加表格时，表头 和 内容 需要分开添加）
         add(table.getTableHeader(), BorderLayout.NORTH);
+
         // 把 表格内容 添加到容器中心
-        add(table, BorderLayout.CENTER);
+        scrollPane = new JScrollPane();
+        scrollPane.getViewport().add(table);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
     public void add(T t) {
@@ -64,7 +72,6 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
         tableModel.fireTableStructureChanged();
     }
 
-
     @Data
     public static class ColumnConfig {
         private final String key;
@@ -84,10 +91,19 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
         }
     }
 
+    /**
+     * 标准 Table 模板
+     */
     private class StandardTableModel extends AbstractTableModel{
 
+        /**
+         * 是否有序号列
+         */
         private boolean serialNumberAble = true;
 
+        /**
+         * 表格是否可以编辑
+         */
         private boolean cellEditable = true;
 
         public String getColumnName(int column) {
@@ -143,6 +159,7 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
             t.put(key, value);
             fireTableCellUpdated(row, col);
         }
+
     }
 
 }

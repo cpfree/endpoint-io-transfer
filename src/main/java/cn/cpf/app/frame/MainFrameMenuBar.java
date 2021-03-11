@@ -4,6 +4,12 @@ import cn.cpf.app.event.MouseReleasedListener;
 
 import javax.swing.*;
 
+/**
+ * <b>Description : </b> 
+ *
+ * @author CPF
+ * @date 2021/2/22
+ **/
 public class MainFrameMenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
