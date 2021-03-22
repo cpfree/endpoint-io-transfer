@@ -1,7 +1,7 @@
 package cn.cpf.app.frame;
 
-import cn.cpf.app.comp.JPathTextField;
 import com.github.cosycode.bdmp.BdmpHandle;
+import com.github.cosycode.ext.swing.comp.JPathTextField;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

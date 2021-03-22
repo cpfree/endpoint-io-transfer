@@ -1,7 +1,5 @@
 package cn.cpf.app.frame;
 
-import cn.cpf.app.comp.JPathTextField;
-import cn.cpf.app.comp.StandardTable;
 import cn.cpf.app.global.ConfigHelper;
 import cn.cpf.app.util.BdmpOutUtils;
 import cn.cpf.app.util.OsUtils;
@@ -14,6 +12,8 @@ import com.github.cosycode.common.ext.hub.LazySingleton;
 import com.github.cosycode.common.ext.hub.SimpleCode;
 import com.github.cosycode.common.thread.AsynchronousProcessor;
 import com.github.cosycode.common.thread.CtrlLoopThreadComp;
+import com.github.cosycode.ext.swing.comp.JPathTextField;
+import com.github.cosycode.ext.swing.comp.StandardTable;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

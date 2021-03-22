@@ -1,6 +1,6 @@
 package cn.cpf.app.frame;
 
-import cn.cpf.app.event.MouseReleasedListener;
+import com.github.cosycode.ext.swing.event.MouseReleasedListener;
 
 import javax.swing.*;
 

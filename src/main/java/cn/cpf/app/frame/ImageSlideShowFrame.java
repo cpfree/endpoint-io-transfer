@@ -1,6 +1,7 @@
 package cn.cpf.app.frame;
 
-import cn.cpf.app.event.KeyReleasedListener;
+
+import com.github.cosycode.ext.swing.event.KeyReleasedListener;
 
 import javax.swing.*;
 import java.awt.*;
