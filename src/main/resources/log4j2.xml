@@ -10,7 +10,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
             <!-- 输出日志的格式 -->
-            <PatternLayout pattern="[%p] %d{yyyy-MM-dd HH:mm:ss} {%1} (%F:%L) %m%n" />
+            <PatternLayout pattern="[%p] %d{yyyy-MM-dd HH:mm:ss} (%F:%L) %m%n" />
         </Console>
     </Appenders>
 
@@ -18,9 +18,9 @@
         <logger name="com.github.cosycode" level="DEBUG"/>
         <Logger name="cn.cpf" level="DEBUG"/>
 
-        <Root level="info">
+        <Root level="debug">
             <AppenderRef ref="TextArea"/>
-<!--            <AppenderRef ref="Console"/>-->
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>

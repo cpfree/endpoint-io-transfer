@@ -18,7 +18,7 @@ public class ConfigHelper {
     private ConfigHelper(){}
 
     private static Properties getProperties() throws IOException {
-        return PropsUtil.loadProps("conf.properties");
+        return PropsUtil.loadProps("classpath:conf.properties");
     }
 
     public static String getSavePath() {

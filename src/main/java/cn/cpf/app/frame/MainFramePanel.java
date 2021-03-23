@@ -38,7 +38,7 @@ public class MainFramePanel extends JPanel {
 
         // tab 选项卡
         tabbedPane = new JTabbedPane();
-        String[] tabNames = {"keyIn", "picRecognize", "realtimeScanner"};
+        String[] tabNames = {"文本打印", "图片识别", "主截幕扫描"};
 
         keyInPane = new KeyInputPanel();
         keyInPane.setBackground(null);

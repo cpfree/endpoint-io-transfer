@@ -1,8 +1,10 @@
 package cn.cpf.app.frame;
 
 import cn.cpf.app.util.LogUtils;
-import lombok.extern.slf4j.Slf4j;
+import com.github.cosycode.ext.swing.comp.JTextAreaAppender;
 import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,19 +15,27 @@ import java.awt.*;
  * @author CPF
  * Date: 2020/8/11 11:29
  */
-@Slf4j
+
 public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger log;
+
     private JPanel contentPane;
+
+    static {
+        // 设置log
+        JTextAreaAppender.setDefaultJTextPane(MainFramePanel.getJTextPane());
+        PluginManager.addPackage("cn.cpf.app.comp.JTextAreaAppender");
+        LogUtils.setLogFlag(true);
+        log = LoggerFactory.getLogger(MainFrame.class);
+    }
 
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
-        LogUtils.setLogFlag(true);
-        PluginManager.addPackage("cn.cpf.app.comp.JTextAreaAppender");
         EventQueue.invokeLater(() -> {
             try {
                 MainFrame frame = new MainFrame();
@@ -40,13 +50,6 @@ public class MainFrame extends JFrame {
      * Create the frame.
      */
     public MainFrame() {
-        LogUtils.setLogFlag(true);
-        try {
-            Class.forName("cn.cpf.app.comp.JTextAreaAppender");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
         setTitle("EndPoint IO Transfer");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

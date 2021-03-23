@@ -12,20 +12,25 @@ import com.github.cosycode.common.ext.hub.LazySingleton;
 import com.github.cosycode.common.ext.hub.SimpleCode;
 import com.github.cosycode.common.thread.AsynchronousProcessor;
 import com.github.cosycode.common.thread.CtrlLoopThreadComp;
+import com.github.cosycode.common.util.io.IoUtils;
 import com.github.cosycode.ext.swing.comp.JPathTextField;
 import com.github.cosycode.ext.swing.comp.StandardTable;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.function.Supplier;
 
 /**
  * <b>Description : </b> 实时扫描面板
@@ -47,6 +52,10 @@ public class RuntimeScanPanel extends JPanel {
     @Getter
     private final JButton btnConvert;
 
+    private JCheckBox checkBoxSaveScreenshot;
+
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd-hhmmss-SSS");
+
     @Getter
     private final JTextField outPath = new JPathTextField(ConfigHelper.getScanSaveDirPath());
 
@@ -63,12 +72,31 @@ public class RuntimeScanPanel extends JPanel {
     public final transient AsynchronousProcessor<BufferedImage> processor = AsynchronousProcessor.ofConsumer(this::distinguish).setName("异步图片识别线程");
 
     private void distinguish(BufferedImage image) {
-        String text = outPath.getText();
-        if (StringUtils.isBlank(text) || !new File(text).isDirectory()) {
-            text = ConfigHelper.getScanSaveDirPath();
-            outPath.setText(text);
+        // 从 路径输入框 获取路径, 如果输入框中的路径为空, 或者不是文件夹, 则使用默认路径, 否则按路径创建对应的文件夹,
+        final Supplier<String> dealOutPathSupplier = () -> {
+            String text = outPath.getText();
+            if (StringUtils.isBlank(text)) {
+                text = ConfigHelper.getScanSaveDirPath();
+                outPath.setText(text);
+            } else {
+                File file = new File(text);
+                if (!file.exists()) {
+                    IoUtils.insureFileDirExist(file);
+                } else if (!file.isDirectory()) {
+                    text = ConfigHelper.getScanSaveDirPath();
+                    outPath.setText(text);
+                }
+            }
+            return text;
+        };
+        final String saveDir = dealOutPathSupplier.get();
+        if (checkBoxSaveScreenshot.isSelected()) {
+            try {
+                ImageIO.write(image, "png", new File(saveDir + "/main-screen-shot-" + dateTimeFormatter.format(LocalDateTime.now()) + ".png"));
+            } catch (IOException e) {
+                log.error("保存截屏失败");
+            }
         }
-        final String saveDir = text;
         final DoubleBean<Boolean, BdmpHeader> booleanBdmpRecInfoDoubleBean = SimpleCode.runtimeException(() -> BdmpOutUtils.convertBinPicToType(image, BdmpSource.SourceType.TYPE_FILE, saveDir, false));
         if (booleanBdmpRecInfoDoubleBean == null) {
             return;
@@ -150,15 +178,14 @@ public class RuntimeScanPanel extends JPanel {
         boardPanel.add(btnOpen, BorderLayout.WEST);
         boardPanel.add(outPath, BorderLayout.CENTER);
 
-        final JPanel scanPanel = getScanPanel();
+        final JComponent toolBar = getToolBar();
 
         add(boardPanel, BorderLayout.NORTH);
         add(tableLazySingleton.instance(), BorderLayout.CENTER);
-        add(scanPanel, BorderLayout.SOUTH);
+        add(toolBar, BorderLayout.SOUTH);
     }
 
-    private JPanel getScanPanel() {
-
+    private JComponent getToolBar() {
         JButton startOrWakeButton = new JButton("实时扫描");
         startOrWakeButton.addActionListener(e -> {
             processor.startOrWake();
@@ -180,15 +207,13 @@ public class RuntimeScanPanel extends JPanel {
             ctrlLoopThreadComp.pause();
             log.info("暂停扫描");
         });
-        JPanel jPanel = new JPanel();
-        jPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        jPanel.setLayout(new GridLayout(1, 5));
-        jPanel.setBackground(null);
-        jPanel.setOpaque(false);
-        jPanel.add(singleScanButton, BorderLayout.WEST);
-        jPanel.add(startOrWakeButton, BorderLayout.CENTER);
-        jPanel.add(pauseScanBtn, BorderLayout.EAST);
-        return jPanel;
+        checkBoxSaveScreenshot = new JCheckBox("保存截屏");
+        JToolBar toolBar = new JToolBar();
+        toolBar.add(singleScanButton, 0);
+        toolBar.add(startOrWakeButton, 1);
+        toolBar.add(pauseScanBtn, 2);
+        toolBar.add(checkBoxSaveScreenshot, 3);
+        return toolBar;
     }
 
 }
