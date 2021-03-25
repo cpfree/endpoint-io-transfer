@@ -1,10 +1,9 @@
-package cn.cpf.app.main;
+package cn.cpf.man;
 
-import cn.cpf.app.frame.ImageSlideShowFrame;
-import cn.cpf.app.util.LogUtils;
-import com.github.cosycode.bdmp.BdmpHandle;
-import com.github.cosycode.common.helper.CommandLineHelper;
-import com.github.cosycode.common.util.io.FileSystemUtils;
+import cn.cpf.bdmp.BdmpHandle;
+import cn.cpf.util.CommandLineHelper;
+import cn.cpf.util.ImageSlideShowFrame;
+import cn.cpf.util.Utils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,9 +12,9 @@ import java.io.IOException;
 
 /**
  * <b>Description : </b> 如果参数路径指向文件, 则将文件转换为 bit-data-map 并显示, 如果参数是文件夹, 则遍历文件夹里面的文件, 并按照配置的时间间隔循环显示
- * <p>1. 直接幻灯片展示文件夹中图片
- * <p>2. 将文件夹中文件转换成ImageBuffer后直接显示图片
- * <p>
+ * <p> 1. 直接幻灯片展示文件夹中图片
+ * <p> 2. 将文件夹中文件转换成ImageBuffer后直接显示图片
+ * <p> command: java -cp remote-tool.jar cn.cpf.man.ShowFrameWithPixelPngForFile -p ${文件或文件夹路径} -r 800 -px 2 -m 20 -inv 2000 -maxLen 300000
  * <b>created in </b> 2020/11/14
  *
  * @author CPF
@@ -49,9 +48,9 @@ public class ShowFrameWithPixelPngForFile {
             throw new FileNotFoundException("文件不存在");
         }
         final ImageSlideShowFrame pixelGenerateFrame = new ImageSlideShowFrame();
-        FileSystemUtils.fileDisposeFromDir(file, file1 -> {
+        Utils.fileDisposeFromDir(file, file1 -> {
             try {
-                LogUtils.printDebug(file1.getAbsolutePath());
+                System.out.println(file1.getAbsolutePath());
                 final BufferedImage bufferedImage = BdmpHandle.convertFileToBdmp(file1, rowPxNum, pxWidth, margin, (byte) powerOf2);
                 pixelGenerateFrame.setPixelImage(bufferedImage);
                 pixelGenerateFrame.suitSize();

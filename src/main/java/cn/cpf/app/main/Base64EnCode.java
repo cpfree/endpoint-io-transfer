@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author CPF
  * @date 2020/11/17
  **/
-public class Base64CodeDispose {
+public class Base64EnCode {
 
     public static void main(String[] args) throws IOException {
         if (args == null || args.length < 1) {

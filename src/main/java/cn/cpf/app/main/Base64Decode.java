@@ -8,17 +8,27 @@ import java.nio.file.FileSystemException;
 import java.util.Base64;
 
 /**
- * <b>Description : </b> 命令行入口, 解析64编码为文件
+ * <b>Description : </b> 将Base64编码文件转换为文件
+ * <p>
+ * <b>created in </b> 2020/11/13
  *
  * @author CPF
- * @date 2020/11/17
+ * @since 1.0
  **/
 public class Base64Decode {
 
+    /**
+     * 将Base64编码文件转换为文件
+     *
+     * @param args -f 待转换的Base64编码文件路径
+     *             -d 转换文件的保存位置
+     * @throws IOException 文件不存在或读取失败
+     */
+    @SuppressWarnings("java:S106")
     public static void main(String[] args) throws IOException {
         CommandLineHelper.requireNonEmpty(args, "参数不能为空");
         final CommandLineHelper lineArgs = CommandLineHelper.parse(args);
-        final String filePath = lineArgs.getParam("fp");
+        final String filePath = lineArgs.getParam("f");
         File file = new File(filePath);
         if (!file.exists()) {
             throw new FileNotFoundException("文件不存在 ==> " + filePath);
@@ -26,7 +36,7 @@ public class Base64Decode {
         if (!file.isFile()) {
             throw new FileSystemException("不是文件 ==> " + filePath);
         }
-        final String savePath = lineArgs.getDefaultParam("sp", file.getParentFile().getPath() + File.separator + "base64.zip");
+        final String savePath = lineArgs.getDefaultParam("d", file.getParentFile().getPath() + File.separator + "base64.zip");
         try(FileReader reader = new FileReader(file)) {
             char[] chars = new char[(int) file.length()];
             final int read = reader.read(chars);
