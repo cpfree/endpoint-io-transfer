@@ -201,7 +201,6 @@ public class KeyInputPanel extends JPanel {
                 int length = textArea.getText().getBytes().length;
                 jfLength.setText(String.valueOf(length));
             }
-
         });
 
         btnStart.addActionListener(e -> {

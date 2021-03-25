@@ -2,7 +2,6 @@ package cn.cpf.app.frame;
 
 import cn.cpf.app.util.LogUtils;
 import com.github.cosycode.ext.swing.comp.JTextAreaAppender;
-import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,6 @@ public class MainFrame extends JFrame {
     static {
         // 设置log
         JTextAreaAppender.setDefaultJTextPane(MainFramePanel.getJTextPane());
-        PluginManager.addPackage("cn.cpf.app.comp.JTextAreaAppender");
         LogUtils.setLogFlag(true);
         log = LoggerFactory.getLogger(MainFrame.class);
     }

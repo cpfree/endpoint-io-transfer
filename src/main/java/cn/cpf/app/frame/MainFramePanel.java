@@ -1,10 +1,14 @@
 package cn.cpf.app.frame;
 
 import cn.cpf.app.global.ConfigHelper;
+import com.github.cosycode.common.util.io.FileSystemUtils;
 import lombok.Getter;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * <b>Description : </b>
@@ -59,19 +63,16 @@ public class MainFramePanel extends JPanel {
 
         jTextPane.setAutoscrolls(true);
         jTextPane.setBackground(ConfigHelper.getDefaultColor());
-        JScrollPane jScrollPane = new JScrollPane(jTextPane);
 
-        // 分别设置水平和垂直滚动条自动出现
-        jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        try {
+            final BufferedImage image = ImageIO.read(FileSystemUtils.newFile("classpath:log-area.jpg"));
+            final JbgPanel logPane = new JbgPanel(image, jTextPane, true);
+            logPane.setPreferredSize(new Dimension(logPane.getPreferredSize().width, 200));
+            add(logPane, BorderLayout.SOUTH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        JPanel logPane = new JPanel();
-        logPane.setLayout(new BorderLayout());
-        logPane.add(jScrollPane, BorderLayout.CENTER);
-
-        jScrollPane.setPreferredSize(new Dimension(jScrollPane.getPreferredSize().width, 200));
-
-        add(logPane, BorderLayout.SOUTH);
     }
 
 }
