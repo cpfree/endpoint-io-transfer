@@ -21,7 +21,7 @@ import java.io.IOException;
  * @author CPF
  * @since 1.0
  **/
-public class ShowFrameWithPixelPngForFile {
+public class ShowFrameWithBdmpForFile {
 
     /**
      * @param args -p 文件或文件夹路径

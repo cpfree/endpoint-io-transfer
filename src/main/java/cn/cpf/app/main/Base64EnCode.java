@@ -1,6 +1,7 @@
 package cn.cpf.app.main;
 
 import cn.cpf.app.util.LogUtils;
+import com.github.cosycode.common.helper.CommandLineHelper;
 import com.github.cosycode.common.util.io.IoUtils;
 import com.github.cosycode.ext.se.util.DataConvertUtils;
 
@@ -17,18 +18,12 @@ import java.util.Arrays;
 public class Base64EnCode {
 
     public static void main(String[] args) throws IOException {
-        if (args == null || args.length < 1) {
-            throw new RuntimeException("参数不能为空");
-        }
+        CommandLineHelper.requireNonEmpty(args, "参数不能为空");
         LogUtils.printInfo(Arrays.toString(args));
-        final String path = args[0];
-        String savePath;
-        if (args.length >= 2) {
-            savePath = args[1];
-        }  else {
-            savePath = path + ".base64";
-        }
-        final String s = DataConvertUtils.fileToBase64(new File(path));
+        final CommandLineHelper lineArgs = CommandLineHelper.parse(args);
+        final String filePath = lineArgs.getParam("f");
+        final String savePath = lineArgs.getDefaultParam("s", filePath + ".base64");
+        final String s = DataConvertUtils.fileToBase64(new File(filePath));
         IoUtils.writeFile(savePath, s.getBytes());
     }
 

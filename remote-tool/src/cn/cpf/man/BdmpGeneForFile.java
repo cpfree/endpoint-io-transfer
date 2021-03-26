@@ -9,7 +9,7 @@ import java.io.IOException;
 
 /**
  * <b>Description : </b> 将文件转换为bit-data-map
- * <p> command: java -cp remote-tool.jar cn.cpf.man.BdmpGeneForFile -f ${base64位编码文件路径} -r 800 -px 2 -m 20 -inv 2000 -maxLen 300000
+ * <p> command: java -cp remote-tool.jar cn.cpf.man.BdmpGeneForFile -f ${base64位编码文件路径} -r 800 -px 2 -m 20
  * <b>created in </b> 2020/11/13
  *
  * @author CPF
@@ -43,7 +43,7 @@ public class BdmpGeneForFile {
         if (!file.isFile() || !file.canRead()) {
             throw new IOException("file: " + filePath + " 不是文件, 或者文件不可读");
         }
-        final String savePath = lineArgs.getDefaultParam("d", file.getParent());
+        final String savePath = lineArgs.getDefaultParam("d", file.getPath() + ".png");
         final int rowPxNum = lineArgs.getDefaultParam("r", 920);
         final int pxWidth = lineArgs.getDefaultParam("px", 2);
         final int margin = lineArgs.getDefaultParam("m", 20);

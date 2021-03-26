@@ -20,8 +20,6 @@ public class BdmpGeneForFile {
      *             <p>-px: 每个数据点的边长
      *             <p>-m : 生成的图片边缘宽度
      *             <p>-p2: 生成的每个数据点携带几个bit数据(默认为8)
-     *             <p>-inv: 如果路径是文件夹, 文件夹里面有多张图片, 渲染每张图片的时间间隔
-     *             <p>-maxLen: 如果路径是文件夹, 渲染的文件最大大小, 默认最大为400K, 如果文件大小超过400K, 则跳过渲染
      * @throws IOException 文件读取异常
      */
     public static void main(String[] args) throws IOException {

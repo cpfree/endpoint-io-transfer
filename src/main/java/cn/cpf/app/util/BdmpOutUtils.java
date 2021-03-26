@@ -5,7 +5,7 @@ import com.github.cosycode.bdmp.BdmpRecInfo;
 import com.github.cosycode.bdmp.BdmpRecognizer;
 import com.github.cosycode.bdmp.BdmpSource;
 import com.github.cosycode.common.ext.bean.DoubleBean;
-import com.github.cosycode.common.util.io.IoUtils;
+import com.github.cosycode.common.util.io.FileSystemUtils;
 import sun.awt.datatransfer.DataTransferer;
 
 import java.awt.*;
@@ -111,7 +111,7 @@ public class BdmpOutUtils {
             saveDirPath += File.separator;
         }
         LogUtils.printSuccess("转换文件成功! ==> {}", fileName);
-        IoUtils.insureFileDirExist(new File(saveDirPath));
+        FileSystemUtils.insureFileDirExist(new File(saveDirPath));
         // 写入文件
         LogUtils.printDebug("准备写入文件");
         final String savePath = saveDirPath + fileName;

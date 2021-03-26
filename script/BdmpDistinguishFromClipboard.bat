@@ -1,5 +1,7 @@
 @echo off
-set appJar="P:\git\git-app\endpoint-io-transfer\out\artifacts\endpoint_io_transfer_jar\endpoint-io-transfer.jar"
+P:
+cd P:\git\git-app\endpoint-io-transfer\out\artifacts\endpoint_io_transfer_jar\
+set appJar="endpoint-io-transfer.jar"
 set savePath=E:\res\FMBS_DEV_BANK\inner\clipout\
 
 :stat
