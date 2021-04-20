@@ -41,9 +41,10 @@ public class ShowFrameWithBdmpForClipboard {
         // 获取粘贴板
         final Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         final Transferable contents = systemClipboard.getContents(null);
-        // 生成图像
+        // 获取参数
         final DataFlavor suitableFlavor = OsUtils.getSuitableFlavor();
         final byte[] bytes = DataTransferer.getInstance().translateTransferable(contents, suitableFlavor, 0);
+        // 生成图像
         final BdmpSource pixelPngSource = BdmpSource.geneByClipboard(suitableFlavor.getMimeType(), bytes);
         BdmpGeneConfig config = new BdmpGeneConfig();
         config.setMargin(margin);

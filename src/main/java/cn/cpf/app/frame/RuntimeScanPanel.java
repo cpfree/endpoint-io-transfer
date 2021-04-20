@@ -1,10 +1,10 @@
 package cn.cpf.app.frame;
 
 import cn.cpf.app.global.ConfigHelper;
+import cn.cpf.app.inter.OnceClickAction;
 import cn.cpf.app.util.BdmpOutUtils;
 import cn.cpf.app.util.OsUtils;
 import com.github.cosycode.bdmp.BdmpHeader;
-import com.github.cosycode.bdmp.BdmpSource;
 import com.github.cosycode.common.base.SupplierWithThrow;
 import com.github.cosycode.common.ext.bean.DoubleBean;
 import com.github.cosycode.common.ext.bean.Record;
@@ -12,7 +12,7 @@ import com.github.cosycode.common.ext.hub.LazySingleton;
 import com.github.cosycode.common.ext.hub.SimpleCode;
 import com.github.cosycode.common.thread.AsynchronousProcessor;
 import com.github.cosycode.common.thread.CtrlLoopThreadComp;
-import com.github.cosycode.common.util.io.IoUtils;
+import com.github.cosycode.common.util.io.FileSystemUtils;
 import com.github.cosycode.ext.swing.comp.JPathTextField;
 import com.github.cosycode.ext.swing.comp.StandardTable;
 import lombok.Getter;
@@ -81,7 +81,7 @@ public class RuntimeScanPanel extends JPanel {
             } else {
                 File file = new File(text);
                 if (!file.exists()) {
-                    IoUtils.insureFileDirExist(file);
+                    FileSystemUtils.insureFileDirExist(file);
                 } else if (!file.isDirectory()) {
                     text = ConfigHelper.getScanSaveDirPath();
                     outPath.setText(text);
@@ -90,6 +90,7 @@ public class RuntimeScanPanel extends JPanel {
             return text;
         };
         final String saveDir = dealOutPathSupplier.get();
+        // 如果启用存储图片功能, 则将截屏存入指定文件夹
         if (checkBoxSaveScreenshot.isSelected()) {
             try {
                 ImageIO.write(image, "png", new File(saveDir + "/main-screen-shot-" + dateTimeFormatter.format(LocalDateTime.now()) + ".png"));
@@ -97,7 +98,9 @@ public class RuntimeScanPanel extends JPanel {
                 log.error("保存截屏失败");
             }
         }
-        final DoubleBean<Boolean, BdmpHeader> booleanBdmpRecInfoDoubleBean = SimpleCode.runtimeException(() -> BdmpOutUtils.convertBinPicToType(image, BdmpSource.SourceType.TYPE_FILE, saveDir, false));
+        final DoubleBean<Boolean, BdmpHeader> booleanBdmpRecInfoDoubleBean = SimpleCode.runtimeException(
+                () -> BdmpOutUtils.convertBinPicToType(image, null, saveDir, false)
+        );
         if (booleanBdmpRecInfoDoubleBean == null) {
             return;
         }
@@ -187,26 +190,23 @@ public class RuntimeScanPanel extends JPanel {
 
     private JComponent getToolBar() {
         JButton startOrWakeButton = new JButton("实时扫描");
-        startOrWakeButton.addActionListener(e -> {
+        startOrWakeButton.addActionListener(OnceClickAction.of(e -> {
             processor.startOrWake();
             ctrlLoopThreadComp.startOrWake();
-            log.info("实时扫描");
-        });
+        }));
         JButton singleScanButton = new JButton("单次扫描");
-        singleScanButton.addActionListener(e -> {
+        singleScanButton.addActionListener(OnceClickAction.of(e -> {
             try {
                 final BufferedImage mainScreenShot = OsUtils.getMainScreenShot(robotSinTon.instance());
                 distinguish(mainScreenShot);
             } catch (AWTException awtException) {
                 awtException.printStackTrace();
             }
-            log.info("单次扫描");
-        });
+        }));
         JButton pauseScanBtn = new JButton("暂停扫描");
-        pauseScanBtn.addActionListener(e -> {
+        pauseScanBtn.addActionListener(OnceClickAction.of(e -> {
             ctrlLoopThreadComp.pause();
-            log.info("暂停扫描");
-        });
+        }));
         checkBoxSaveScreenshot = new JCheckBox("保存截屏");
         JToolBar toolBar = new JToolBar();
         toolBar.add(singleScanButton, 0);

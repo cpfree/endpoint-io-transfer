@@ -71,11 +71,15 @@ public class PixelPanel extends JPanel {
             }
             try {
                 String savePath = file.getParentFile().getPath() + File.separator + "outfile" + File.separator;
-                BdmpHandle.convertBdmpToFile(pathText, savePath);
-                log.info("转换成功");
-                File outDir = new File(savePath);
-                if (outDir.exists()) {
-                    Desktop.getDesktop().open(outDir);
+                final boolean b = BdmpHandle.convertBdmpToFile(pathText, savePath);
+                if (b) {
+                    log.info("转换成功, 生成源");
+                    File outDir = new File(savePath);
+                    if (outDir.exists()) {
+                        Desktop.getDesktop().open(outDir);
+                    }
+                } else {
+                    log.info("未发现数据");
                 }
             } catch (Exception ex) {
                 log.error("转换失败", ex);

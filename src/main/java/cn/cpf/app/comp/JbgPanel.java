@@ -1,4 +1,4 @@
-package cn.cpf.app.frame;
+package cn.cpf.app.comp;
 
 import com.github.cosycode.common.util.io.FileSystemUtils;
 import lombok.Getter;
@@ -19,7 +19,7 @@ import java.io.IOException;
  **/
 public class JbgPanel extends JPanel {
 
-    private final JScrollPane sp;
+    private JScrollPane sp;
 
     @Getter
     private JComponent component;
@@ -40,11 +40,17 @@ public class JbgPanel extends JPanel {
      * @param scroll false: 若有背景图片, 则背景图片无法滚动(定位在画面上), true: 若有背景图片, 则背景图片可以滚动
      */
     public JbgPanel(Image backgroundImg, JComponent component, boolean scroll) {
-        setOpaque(false);
         setLayout(new BorderLayout());
         setImage(backgroundImg);
+        this.component = component;
+        this.scroll = scroll;
+        setOpaque(false);
         component.setOpaque(false);
-        if (scroll) {
+        if (component instanceof JScrollPane) {
+            sp = (JScrollPane) component;
+            sp.getViewport().setOpaque(false);
+            add(component);
+        } else if (scroll) {
             sp = new JScrollPane(component);
             // 分别设置水平和垂直滚动条自动出现
             sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -56,8 +62,6 @@ public class JbgPanel extends JPanel {
             sp = null;
             add(component);
         }
-        this.component = component;
-        this.scroll = scroll;
     }
 
     public void setImage(Image image) {
@@ -66,7 +70,7 @@ public class JbgPanel extends JPanel {
 
     public static void main(String args[]) throws IOException {
         JFrame frame = new JFrame();
-        final BufferedImage image = ImageIO.read(FileSystemUtils.newFile("classpath:log-area.jpg"));
+        final BufferedImage image = ImageIO.read(FileSystemUtils.findFile("classpath:log-area.jpg"));
         final JbgPanel jbgPanel = new JbgPanel(image, new JTextArea(), true);
         frame.setContentPane(jbgPanel);
         frame.setVisible(true);

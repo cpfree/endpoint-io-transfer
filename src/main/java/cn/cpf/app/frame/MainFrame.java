@@ -1,7 +1,7 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.comp.JTextAreaAppender;
 import cn.cpf.app.util.LogUtils;
-import com.github.cosycode.ext.swing.comp.JTextAreaAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +21,11 @@ public class MainFrame extends JFrame {
 
     private static final Logger log;
 
-    private JPanel contentPane;
+    private final MainFramePanel contentPane;
 
     static {
         // 设置log
-        JTextAreaAppender.setDefaultJTextPane(MainFramePanel.getJTextPane());
+        JTextAreaAppender.setDefaultJTextPane(LogPanel.getJTextPane());
         LogUtils.setLogFlag(true);
         log = LoggerFactory.getLogger(MainFrame.class);
     }
@@ -37,7 +37,6 @@ public class MainFrame extends JFrame {
         EventQueue.invokeLater(() -> {
             try {
                 MainFrame frame = new MainFrame();
-                frame.setVisible(true);
             } catch (Exception e) {
                 log.error("main error", e);
             }
@@ -60,6 +59,14 @@ public class MainFrame extends JFrame {
         contentPane = new MainFramePanel();
         contentPane.setVisible(true);
         setContentPane(contentPane);
+        new Thread(() -> {
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            contentPane.getSplitPane().setDividerLocation(0.7);
+        }).start();
     }
 
 

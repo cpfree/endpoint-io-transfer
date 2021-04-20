@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * <b>Description : </b>
+ * <b>Description : </b> 图片输出工具类
+ * <p>
+ * <b>created in </b> 2020/11/9
  *
  * @author CPF
- * @date 2020/11/9 11:43
+ * @since 1.0
  **/
 public class BdmpOutUtils {
 
@@ -52,7 +54,9 @@ public class BdmpOutUtils {
     }
 
     /**
-     * 将路径指向的 binPic 转换为文件并存储到指定文件夹
+     * 如果解析出来的图片是粘贴板, 则将内容添加到系统粘贴板种
+     * 如果解析出来的内容指向文件, 则将内容存储为文件, 存到指定路径, 如果该路径下已存在同名文件, 则根据 isOverWrite 标记做处理,
+     * 如果 isOverWrite 为 ture, 则覆盖, 否则跳过图片解析.
      *
      * @param image binPic 图片
      * @param sourceType  转换的内容解析输出方式
@@ -117,7 +121,7 @@ public class BdmpOutUtils {
         final String savePath = saveDirPath + fileName;
         final File file = new File(savePath);
         if (!isOverWrite && file.exists()) {
-            LogUtils.printSuccess("文件已存在 ==> {}", savePath);
+            LogUtils.printWarning("文件已存在 ==> {}", savePath);
             return false;
         }
         try (FileOutputStream outputStream = new FileOutputStream(file)){

@@ -1,6 +1,7 @@
 package cn.cpf.app.frame;
 
 import com.github.cosycode.ext.swing.event.MouseReleasedListener;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 
@@ -10,6 +11,7 @@ import javax.swing.*;
  * @author CPF
  * @date 2021/2/22
  **/
+@Slf4j
 public class MainFrameMenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
@@ -19,24 +21,23 @@ public class MainFrameMenuBar extends JMenuBar {
 	}
 
 	private void addSettingMenu() {
-		JMenu muSetting = new JMenu("clear Log");
+		JMenu muSetting = new JMenu("Help");
 		add(muSetting);
-		JMenu muSetting1 = new JMenu("最下 Log");
-		add(muSetting1);
-		JMenu muSetting2 = new JMenu("最上 Log");
-		add(muSetting2);
 
-		muSetting.addMouseListener((MouseReleasedListener) (e) -> {
-			MainFramePanel.getJTextPane().setText("");
-		});
-		muSetting1.addMouseListener((MouseReleasedListener) (e) -> {
-			final JTextPane jTextPane = MainFramePanel.getJTextPane();
-			jTextPane.setCaretPosition(jTextPane.getStyledDocument().getLength());
-			jTextPane.setAutoscrolls(true);
-		});
-		muSetting2.addMouseListener((MouseReleasedListener) (e) -> {
-			final JTextPane jTextPane = MainFramePanel.getJTextPane();
-			jTextPane.setCaretPosition(0);
+		addMenuItem(muSetting, "help", e -> {});
+		addMenuItem(muSetting, "check for updates...", e -> {});
+		addMenuItem(muSetting, "about", e -> {});
+
+	}
+
+
+	private void addMenuItem(JMenu menu, String itemLabel, MouseReleasedListener listener) {
+		JMenuItem info = new JMenuItem(itemLabel);
+		menu.add(info);
+//		info.addMouseListener(listener);
+		info.addMouseListener((MouseReleasedListener) (e) -> {
+			log.debug(info.getText());
+			listener.mouseReleased(e);
 		});
 	}
 

@@ -1,14 +1,9 @@
 package cn.cpf.app.frame;
 
-import cn.cpf.app.global.ConfigHelper;
-import com.github.cosycode.common.util.io.FileSystemUtils;
 import lombok.Getter;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 /**
  * <b>Description : </b>
@@ -18,10 +13,10 @@ import java.io.IOException;
  */
 public class MainFramePanel extends JPanel {
 
-    private static final long serialVersionUID = 1L;
-
     @Getter
     private static final JTextPane jTextPane = new JTextPane();
+    @Getter
+    private final JSplitPane splitPane;
     @Getter
     private final JTabbedPane tabbedPane;
     @Getter
@@ -59,20 +54,15 @@ public class MainFramePanel extends JPanel {
         runtimeScanPane.setOpaque(false);
         tabbedPane.addTab(tabNames[2], runtimeScanPane);
 
-        add(tabbedPane, BorderLayout.CENTER);
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
-        jTextPane.setAutoscrolls(true);
-        jTextPane.setBackground(ConfigHelper.getDefaultColor());
+        splitPane.setTopComponent(tabbedPane);
+        splitPane.setBottomComponent(new LogPanel());
+        splitPane.setFocusable(true);
+        splitPane.setAutoscrolls(true);
+        splitPane.setIgnoreRepaint(false);
 
-        try {
-            final BufferedImage image = ImageIO.read(FileSystemUtils.newFile("classpath:log-area.jpg"));
-            final JbgPanel logPane = new JbgPanel(image, jTextPane, true);
-            logPane.setPreferredSize(new Dimension(logPane.getPreferredSize().width, 200));
-            add(logPane, BorderLayout.SOUTH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        add(splitPane, BorderLayout.CENTER);
     }
 
 }
