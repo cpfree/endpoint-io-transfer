@@ -26,7 +26,16 @@ public class MainFrameMenuBar extends JMenuBar {
 
 		addMenuItem(muSetting, "help", e -> {});
 		addMenuItem(muSetting, "check for updates...", e -> {});
-		addMenuItem(muSetting, "about", e -> {});
+		addMenuItem(muSetting, "about", e -> {
+			try {
+				VersionPanel frame = VersionPanel.instance();
+				frame.setTitle("about");
+				frame.setVisible(true);
+				frame.setBounds(200, 100, 400, 300);
+			} catch (Exception ex) {
+				log.error("main error", ex);
+			}
+		});
 
 	}
 

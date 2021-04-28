@@ -7,8 +7,6 @@ import org.junit.Test;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-import static com.github.cosycode.common.util.io.IoUtils.insureFileExist;
-
 public class TestConvert {
 
     public static void main(String[] args) throws IOException {
@@ -41,7 +39,7 @@ public class TestConvert {
      */
     public static void writeFile(@NonNull String savePath, @NonNull String content) {
         final File file = new File(savePath);
-        insureFileExist(file);
+        FileSystemUtils.insureFileExist(file);
 
         // 写入文件
         try (final FileWriter writer = new FileWriter(file)){

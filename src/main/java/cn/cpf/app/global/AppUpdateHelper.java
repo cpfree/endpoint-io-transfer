@@ -68,7 +68,7 @@ public class AppUpdateHelper {
 
     // 下载最新版本
     public static String download(ArrayList<DownloadInfo> downloadList, JProgressBar bar) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (downloadList != null) {
             for (DownloadInfo info : downloadList) {
                 String fileName = info.getName();

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Configuration status="INFO">
     <Appenders>
-        <!-- 这个就是自定义的Appender -->
-        <JTextAreaAppender name="TextArea" >
-            <PatternLayout pattern="[%-5p] %d{HH:mm:ss} - %m%n" />
-        </JTextAreaAppender>
+<!--        &lt;!&ndash; 这个就是自定义的Appender &ndash;&gt;-->
+<!--        <JTextAreaAppender name="TextArea" >-->
+<!--            <PatternLayout pattern="[%-5p] %d{HH:mm:ss} - %m%n" />-->
+<!--        </JTextAreaAppender>-->
 
         <!--这个输出控制台的配置，这里输出除了warn和error级别的信息到System.out -->
         <Console name="Console" target="SYSTEM_OUT">
@@ -19,7 +19,6 @@
         <Logger name="cn.cpf" level="DEBUG"/>
 
         <Root level="debug">
-            <AppenderRef ref="TextArea"/>
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>

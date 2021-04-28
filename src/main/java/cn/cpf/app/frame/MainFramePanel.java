@@ -55,7 +55,6 @@ public class MainFramePanel extends JPanel {
         tabbedPane.addTab(tabNames[2], runtimeScanPane);
 
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-
         splitPane.setTopComponent(tabbedPane);
         splitPane.setBottomComponent(new LogPanel());
         splitPane.setFocusable(true);

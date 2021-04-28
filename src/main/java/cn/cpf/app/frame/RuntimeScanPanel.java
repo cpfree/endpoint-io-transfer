@@ -14,7 +14,7 @@ import com.github.cosycode.common.thread.AsynchronousProcessor;
 import com.github.cosycode.common.thread.CtrlLoopThreadComp;
 import com.github.cosycode.common.util.io.FileSystemUtils;
 import com.github.cosycode.ext.swing.comp.JPathTextField;
-import com.github.cosycode.ext.swing.comp.StandardTable;
+import com.github.cosycode.ext.swing.comp.StandardGrid;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,18 +54,22 @@ public class RuntimeScanPanel extends JPanel {
 
     private JCheckBox checkBoxSaveScreenshot;
 
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd-hhmmss-SSS");
+    /**
+     * 只作为单线程使用
+     */
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd-hhmmss-SSS");
 
     @Getter
     private final JTextField outPath = new JPathTextField(ConfigHelper.getScanSaveDirPath());
 
-    private final transient LazySingleton<StandardTable<Record>> tableLazySingleton = LazySingleton.of(() -> {
-        final StandardTable<Record> standardTable = new StandardTable<>();
+    private final transient LazySingleton<StandardGrid<Record>> tableLazySingleton = LazySingleton.of(() -> {
+        final StandardGrid<Record> standardTable = new StandardGrid<>();
         standardTable.setColumnConfigList(Arrays.asList(
-                new StandardTable.ColumnConfig("tag", "名称"),
-                new StandardTable.ColumnConfig("length", "长度"),
-                new StandardTable.ColumnConfig("deTime", "解析时间")
+                new StandardGrid.ColumnConfig("tag", "名称"),
+                new StandardGrid.ColumnConfig("length", "长度"),
+                new StandardGrid.ColumnConfig("deTime", "解析时间")
         ));
+        standardTable.setPreferredScrollableViewportRowSize(10);
         return standardTable;
     });
 

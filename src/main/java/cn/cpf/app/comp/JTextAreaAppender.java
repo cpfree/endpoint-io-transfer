@@ -38,7 +38,7 @@ public class JTextAreaAppender extends AbstractAppender {
     @Getter
     protected final JTextPane jTextPane;
 
-    protected JTextAreaAppender(String name, Filter filter, Layout<? extends Serializable> layout,
+    public JTextAreaAppender(String name, Filter filter, Layout<? extends Serializable> layout,
                                 final boolean ignoreExceptions, JTextPane jTextPane) {
         super(name, filter, layout, ignoreExceptions, Property.EMPTY_ARRAY);
         this.jTextPane = jTextPane;
@@ -55,13 +55,13 @@ public class JTextAreaAppender extends AbstractAppender {
         StyleConstants.setForeground(debug, Color.GRAY);
         jTextPane.setParagraphAttributes(debug, true);
 
-        Style error = jTextPane.addStyle(Level.ERROR.name(), def);
-        StyleConstants.setForeground(error, Color.RED);
-        jTextPane.setParagraphAttributes(error, true);
-
         Style warn = jTextPane.addStyle(Level.WARN.name(), def);
         StyleConstants.setForeground(warn, Color.YELLOW);
         jTextPane.setParagraphAttributes(warn, true);
+
+        Style error = jTextPane.addStyle(Level.ERROR.name(), def);
+        StyleConstants.setForeground(error, Color.RED);
+        jTextPane.setParagraphAttributes(error, true);
     }
 
     @Override
@@ -105,4 +105,5 @@ public class JTextAreaAppender extends AbstractAppender {
             return new JTextAreaAppender(name, filter, layout, ignoreExceptions, defaultJTextPane);
         }
     }
+
 }

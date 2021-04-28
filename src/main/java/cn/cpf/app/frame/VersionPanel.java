@@ -4,6 +4,8 @@
 
 package cn.cpf.app.frame;
 
+import com.github.cosycode.common.ext.hub.LazySingleton;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -12,7 +14,18 @@ import java.awt.*;
  * @author Brainrain
  */
 public class VersionPanel extends JFrame {
-    public VersionPanel() {
+
+    public static void main(String[] args) {
+
+    }
+
+    private static final LazySingleton<VersionPanel> panelLazySingleton = LazySingleton.of(VersionPanel::new);
+
+    public static VersionPanel instance() {
+        return panelLazySingleton.instance();
+    }
+
+    private VersionPanel() {
         initComponents();
     }
 

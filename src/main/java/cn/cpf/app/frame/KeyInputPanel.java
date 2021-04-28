@@ -206,13 +206,13 @@ public class KeyInputPanel extends JPanel {
         btnStart.addActionListener(e -> {
             log.debug("准备打印, 请找寻焦点, 并将输入法调至英文");
             // 等待时间
-            int sleepTime = prepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false, false));
+            int sleepTime = prepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false));
             if (sleepTime < 2000 || sleepTime > 30000) {
                 log.warn("等待时间需要在 2000 - 30000 以内");
                 return;
             }
             // 字符打印时间间隔
-            final int intervalTime = interval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false, false));
+            final int intervalTime = interval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false));
             if (intervalTime < 3 || intervalTime > 1000) {
                 log.warn("等待时间需要在 3 - 1000 以内");
                 return;
@@ -248,13 +248,13 @@ public class KeyInputPanel extends JPanel {
             if (asynchronousProcessor.isSuspend()) {
                 log.debug("准备打印, 请找寻焦点, 并将输入法调至英文");
                 // 等待时间
-                int sleepTime = prepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false, false));
+                int sleepTime = prepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false));
                 if (sleepTime < 2000 || sleepTime > 30000) {
                     log.warn("等待时间需要在 2000 - 30000 以内");
                     return;
                 }
                 // 字符打印时间间隔
-                final int intervalTime = interval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false, false));
+                final int intervalTime = interval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false));
                 if (intervalTime < 3 || intervalTime > 1000) {
                     log.warn("等待时间需要在 3 - 1000 以内");
                     return;
