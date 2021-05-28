@@ -33,7 +33,7 @@ public class AppUpdateHelper {
     /**
      * 获取当前最新版本的地址
      */
-    private static final String LATEST_VERSION_SELECT_URL = "https://api.github.com/repos/cosycode/common-lang/releases/latest";
+    private static final String LATEST_VERSION_SELECT_URL = "https://api.github.com/repos/sinjar-chen/endpoint-io-transfer/releases/latest";
 
     public static void main(String[] args) {
 

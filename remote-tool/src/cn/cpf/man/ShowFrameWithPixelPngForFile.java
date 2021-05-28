@@ -60,7 +60,7 @@ public class ShowFrameWithPixelPngForFile {
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
-        }, file2 -> file2.length() < maxLen);
+        }, file2 -> file2.isDirectory() || file2.length() < maxLen);
     }
 
 }

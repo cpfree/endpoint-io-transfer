@@ -1,5 +1,6 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.global.CompContext;
 import cn.cpf.app.global.ConfigHelper;
 import cn.cpf.app.inter.OnceClickAction;
 import cn.cpf.app.util.BdmpOutUtils;
@@ -54,6 +55,8 @@ public class RuntimeScanPanel extends JPanel {
 
     private JCheckBox checkBoxSaveScreenshot;
 
+    private JCheckBox checkBoxOverwrite;
+
     /**
      * 只作为单线程使用
      */
@@ -69,12 +72,26 @@ public class RuntimeScanPanel extends JPanel {
                 new StandardGrid.ColumnConfig("length", "长度"),
                 new StandardGrid.ColumnConfig("deTime", "解析时间")
         ));
+        CompContext.register("scannerGrid", standardTable, (String key, StandardGrid<Record> grid) -> {
+            grid.setColumnConfigList(Arrays.asList(
+                    new StandardGrid.ColumnConfig("tag", "名称"),
+                    new StandardGrid.ColumnConfig("length", "长度"),
+                    new StandardGrid.ColumnConfig("deTime", "解析时间")
+            ));
+        });
+
         standardTable.setPreferredScrollableViewportRowSize(10);
         return standardTable;
     });
 
     public final transient AsynchronousProcessor<BufferedImage> processor = AsynchronousProcessor.ofConsumer(this::distinguish).setName("异步图片识别线程");
 
+    /**
+     * 对截取的屏幕图片对象进行处理
+     * <p>对图片进行分析, 如果发现图片中的bdmp信息, 则对其进行解析, 存储文件夹, 并在表格上显示识别到的信息</p>
+     *
+     * @param image 截取的图片对象
+     */
     private void distinguish(BufferedImage image) {
         // 从 路径输入框 获取路径, 如果输入框中的路径为空, 或者不是文件夹, 则使用默认路径, 否则按路径创建对应的文件夹,
         final Supplier<String> dealOutPathSupplier = () -> {
@@ -102,8 +119,9 @@ public class RuntimeScanPanel extends JPanel {
                 log.error("保存截屏失败");
             }
         }
+        final boolean selected = checkBoxOverwrite.isSelected();
         final DoubleBean<Boolean, BdmpHeader> booleanBdmpRecInfoDoubleBean = SimpleCode.runtimeException(
-                () -> BdmpOutUtils.convertBinPicToType(image, null, saveDir, false)
+                () -> BdmpOutUtils.convertBinPicToType(image, null, saveDir, selected)
         );
         if (booleanBdmpRecInfoDoubleBean == null) {
             return;
@@ -145,7 +163,7 @@ public class RuntimeScanPanel extends JPanel {
         this.setBackground(null);
         this.setOpaque(false);
 
-        btnOpen = new JButton("选择输出文件夹");
+        btnOpen = new JButton("SelectOutputFolder");
         btnOpen.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -157,7 +175,7 @@ public class RuntimeScanPanel extends JPanel {
             }
         });
 
-        btnConvert = new JButton("打开输出文件夹");
+        btnConvert = new JButton("OpenOutputFolder");
         btnConvert.addActionListener(e -> {
             String pathText = outPath.getText();
             if (StringUtils.isBlank(pathText)) {
@@ -193,12 +211,13 @@ public class RuntimeScanPanel extends JPanel {
     }
 
     private JComponent getToolBar() {
-        JButton startOrWakeButton = new JButton("实时扫描");
+        JButton startOrWakeButton = new JButton("RealTimeScanning");
         startOrWakeButton.addActionListener(OnceClickAction.of(e -> {
             processor.startOrWake();
             ctrlLoopThreadComp.startOrWake();
         }));
-        JButton singleScanButton = new JButton("单次扫描");
+        JButton singleScanButton = new JButton("SingleScan");
+
         singleScanButton.addActionListener(OnceClickAction.of(e -> {
             try {
                 final BufferedImage mainScreenShot = OsUtils.getMainScreenShot(robotSinTon.instance());
@@ -207,16 +226,19 @@ public class RuntimeScanPanel extends JPanel {
                 awtException.printStackTrace();
             }
         }));
-        JButton pauseScanBtn = new JButton("暂停扫描");
+        JButton pauseScanBtn = new JButton("PauseScanning");
         pauseScanBtn.addActionListener(OnceClickAction.of(e -> {
             ctrlLoopThreadComp.pause();
         }));
-        checkBoxSaveScreenshot = new JCheckBox("保存截屏");
+        checkBoxSaveScreenshot = new JCheckBox("SaveScreenshot");
+        checkBoxOverwrite = new JCheckBox("cover");
+        checkBoxOverwrite.setToolTipText("如果选中此选项, 如果文件夹中存在同名文件,则覆盖");
         JToolBar toolBar = new JToolBar();
         toolBar.add(singleScanButton, 0);
         toolBar.add(startOrWakeButton, 1);
         toolBar.add(pauseScanBtn, 2);
         toolBar.add(checkBoxSaveScreenshot, 3);
+        toolBar.add(checkBoxOverwrite, 4);
         return toolBar;
     }
 

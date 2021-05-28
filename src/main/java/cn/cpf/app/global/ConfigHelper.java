@@ -29,11 +29,12 @@ public class ConfigHelper {
         return SimpleCode.runtimeException(ConfigHelper::getProperties).getProperty("scanSaveDirPath");
     }
 
+    public static String getLanguage() {
+        return SimpleCode.runtimeException(ConfigHelper::getProperties).getProperty("language");
+    }
+
     public static Color getDefaultColor() {
         return Color.lightGray;
     }
-
-
-
 
 }
