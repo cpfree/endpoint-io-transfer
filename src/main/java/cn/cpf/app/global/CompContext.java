@@ -1,8 +1,8 @@
 package cn.cpf.app.global;
 
+import cn.cpf.app.comp.JField;
 import com.github.cosycode.common.ext.hub.Throws;
 import com.github.cosycode.common.util.io.PropsUtil;
-import com.github.cosycode.ext.swing.comp.JField;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

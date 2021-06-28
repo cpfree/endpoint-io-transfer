@@ -1,5 +1,6 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.comp.JField;
 import cn.cpf.app.global.CompContext;
 import com.github.cosycode.common.ext.hub.LazySingleton;
 import com.github.cosycode.common.ext.hub.SimpleCode;
@@ -7,7 +8,6 @@ import com.github.cosycode.common.thread.AsynchronousProcessor;
 import com.github.cosycode.common.util.io.IoUtils;
 import com.github.cosycode.ext.se.robot.KeyPressDecorator;
 import com.github.cosycode.ext.se.util.DataConvertUtils;
-import com.github.cosycode.ext.swing.comp.JField;
 import com.github.cosycode.ext.swing.comp.JPathTextField;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
