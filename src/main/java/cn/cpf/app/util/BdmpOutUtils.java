@@ -27,12 +27,13 @@ import java.util.Optional;
  **/
 public class BdmpOutUtils {
 
-    private BdmpOutUtils(){}
+    private BdmpOutUtils() {
+    }
 
     /**
      * 将路径指向的 binPic 转换为文件并存储到指定文件夹
      *
-     * @param image binPic 图片
+     * @param image       binPic 图片
      * @param saveDirPath 解析后的文件存储路径
      * @return 是否成功
      */
@@ -44,7 +45,7 @@ public class BdmpOutUtils {
     /**
      * 将路径指向的 binPic 转换为文件并存储到指定文件夹
      *
-     * @param image binPic 图片
+     * @param image       binPic 图片
      * @param saveDirPath 解析后的文件存储路径
      * @return 是否成功
      */
@@ -58,7 +59,7 @@ public class BdmpOutUtils {
      * 如果解析出来的内容指向文件, 则将内容存储为文件, 存到指定路径, 如果该路径下已存在同名文件, 则根据 isOverWrite 标记做处理,
      * 如果 isOverWrite 为 ture, 则覆盖, 否则跳过图片解析.
      *
-     * @param image binPic 图片
+     * @param image       binPic 图片
      * @param sourceType  转换的内容解析输出方式
      * @param saveDirPath 如果转换的内容是文件, 则解析后的文件存储路径
      * @param isOverWrite 如果解析后的内容是文件, 且文件已存在, 则是否覆盖
@@ -103,11 +104,10 @@ public class BdmpOutUtils {
 
     /**
      * @param saveDirPath 写入文件夹
-     * @param fileName 文件名称
-     * @param content 写入内容
+     * @param fileName    文件名称
+     * @param content     写入内容
      * @param isOverWrite 如果文件已存在, 是否覆盖, 若为 false, 则直接跳出
      * @return 是否正确写入了文件
-     *
      * @throws IOException
      */
     public static boolean writeFile(String saveDirPath, String fileName, byte[] content, boolean isOverWrite) throws IOException {
@@ -124,7 +124,7 @@ public class BdmpOutUtils {
             LogUtils.printWarning("文件已存在 ==> {}", savePath);
             return false;
         }
-        try (FileOutputStream outputStream = new FileOutputStream(file)){
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(content);
         }
         LogUtils.printSuccess("写入文件成功 ==> {}", savePath);

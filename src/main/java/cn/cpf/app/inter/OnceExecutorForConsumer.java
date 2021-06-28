@@ -31,7 +31,7 @@ public class OnceExecutorForConsumer<T> {
      * 代理方法
      *
      * <p>
-     *     每次调用新建一个线程对参数进行处理, 主线程不阻塞, 分线程竞争锁, 抢到运行 then, 抢不到运行 skip
+     * 每次调用新建一个线程对参数进行处理, 主线程不阻塞, 分线程竞争锁, 抢到运行 then, 抢不到运行 skip
      * </p>
      */
     public void onceExe(final T e) {

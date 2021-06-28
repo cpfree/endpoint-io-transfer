@@ -1,5 +1,6 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.global.CompContext;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -37,22 +38,29 @@ public class MainFramePanel extends JPanel {
 
         // tab 选项卡
         tabbedPane = new JTabbedPane();
-        String[] tabNames = {"文本打印", "图片识别", "主截幕扫描"};
+        String[] tabNames = {"TextPrinting", "PictureRecognition", "MainScreenScanning"};
 
         keyInPane = new KeyInputPanel();
         keyInPane.setBackground(null);
         keyInPane.setOpaque(false);
-        tabbedPane.addTab(tabNames[0], keyInPane);
 
         pixelPane = new PixelPanel();
         pixelPane.setBackground(null);
         pixelPane.setOpaque(false);
-        tabbedPane.addTab(tabNames[1], pixelPane);
 
         runtimeScanPane = new RuntimeScanPanel();
         runtimeScanPane.setBackground(null);
         runtimeScanPane.setOpaque(false);
-        tabbedPane.addTab(tabNames[2], runtimeScanPane);
+
+        CompContext.register(new CompContext.CompBean<JComponent>() {
+            @Override
+            public void check() {
+                tabbedPane.removeAll();
+                tabbedPane.addTab(getLangString(tabNames[0]), keyInPane);
+                tabbedPane.addTab(getLangString(tabNames[1]), pixelPane);
+                tabbedPane.addTab(getLangString(tabNames[2]), runtimeScanPane);
+            }
+        });
 
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(tabbedPane);

@@ -21,7 +21,7 @@ public class BdmpRecForFile {
         String savePath;
         if (args.length >= 2) {
             savePath = args[1];
-        }  else {
+        } else {
             savePath = OsUtils.getFileDir(path) + "out" + File.separator;
         }
         BufferedImage image = BdmpUtils.load(path);

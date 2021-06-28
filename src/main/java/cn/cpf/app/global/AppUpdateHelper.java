@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 /**
  * <b>Description : </b> 升级
  * <p>
- *     1. 检查是否是最新版
- *     2. 下载最新版本安装包
- *     3. 关闭当前程序, 由系统运行cmd命令完成文件替换操作.
- *     4. 退出
+ * 1. 检查是否是最新版
+ * 2. 下载最新版本安装包
+ * 3. 关闭当前程序, 由系统运行cmd命令完成文件替换操作.
+ * 4. 退出
  *
  * <b>created in </b> 2021/4/19
  *
@@ -41,21 +41,21 @@ public class AppUpdateHelper {
 
     private GithubUpdateApiBean updateApiBean;
 
-    public String getVersionInfo(){
+    public String getVersionInfo() {
         String result = HttpUtils.sendGetRequest(LATEST_VERSION_SELECT_URL);
-        if(result!=null){
+        if (result != null) {
             updateApiBean = new Gson().fromJson(result, GithubUpdateApiBean.class);
             return "Version info get success";
-        }else{
+        } else {
             return "Version info get failed";
         }
     }
 
-    public String getLatestVersion(){
+    public String getLatestVersion() {
         return updateApiBean.getTag_name();
     }
 
-    public List<DownloadInfo> getDownLoadUrl(){
+    public List<DownloadInfo> getDownLoadUrl() {
         // 返回当前文件的下载列表
         final List<GithubUpdateApiBean.Assets> assets = updateApiBean.getAssets();
         return assets.stream().map(it -> {
@@ -84,7 +84,7 @@ public class AppUpdateHelper {
         return sb.toString();
     }
 
-    public String getCurrentVersion(){
+    public String getCurrentVersion() {
         return "0.2";
     }
 

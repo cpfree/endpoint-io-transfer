@@ -67,19 +67,19 @@ public class RuntimeScanPanel extends JPanel {
 
     private final transient LazySingleton<StandardGrid<Record>> tableLazySingleton = LazySingleton.of(() -> {
         final StandardGrid<Record> standardTable = new StandardGrid<>();
-        standardTable.setColumnConfigList(Arrays.asList(
-                new StandardGrid.ColumnConfig("tag", "名称"),
-                new StandardGrid.ColumnConfig("length", "长度"),
-                new StandardGrid.ColumnConfig("deTime", "解析时间")
-        ));
-        CompContext.register("scannerGrid", standardTable, (String key, StandardGrid<Record> grid) -> {
-            grid.setColumnConfigList(Arrays.asList(
-                    new StandardGrid.ColumnConfig("tag", "名称"),
-                    new StandardGrid.ColumnConfig("length", "长度"),
-                    new StandardGrid.ColumnConfig("deTime", "解析时间")
-            ));
-        });
-
+        CompContext.CompBean<JComponent> jButtonCompBean = new CompContext.CompBean<JComponent>() {
+            @Override
+            public void check() {
+                ((StandardGrid<?>.StandardTableModel)standardTable.getTableModel()).setOrderHeaderName(getLangString("scanner.table.order"));
+                standardTable.setColumnConfigList(Arrays.asList(
+                        new StandardGrid.ColumnConfig("tag", getLangString("scanner.table.tag")),
+                        new StandardGrid.ColumnConfig("length", getLangString("scanner.table.length")),
+                        new StandardGrid.ColumnConfig("deTime", getLangString("scanner.table.deTime"))
+                ));
+            }
+        };
+        jButtonCompBean.check();
+        CompContext.register(jButtonCompBean);
         standardTable.setPreferredScrollableViewportRowSize(10);
         return standardTable;
     });
@@ -163,7 +163,7 @@ public class RuntimeScanPanel extends JPanel {
         this.setBackground(null);
         this.setOpaque(false);
 
-        btnOpen = new JButton("SelectOutputFolder");
+        btnOpen = CompContext.registerComponent("SelectOutputFolder", new JButton());
         btnOpen.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -175,7 +175,7 @@ public class RuntimeScanPanel extends JPanel {
             }
         });
 
-        btnConvert = new JButton("OpenOutputFolder");
+        btnConvert = CompContext.registerComponent("OpenOutputFolder", new JButton());
         btnConvert.addActionListener(e -> {
             String pathText = outPath.getText();
             if (StringUtils.isBlank(pathText)) {
@@ -211,12 +211,12 @@ public class RuntimeScanPanel extends JPanel {
     }
 
     private JComponent getToolBar() {
-        JButton startOrWakeButton = new JButton("RealTimeScanning");
+        JButton startOrWakeButton = CompContext.registerComponent("RealTimeScanning", new JButton());
         startOrWakeButton.addActionListener(OnceClickAction.of(e -> {
             processor.startOrWake();
             ctrlLoopThreadComp.startOrWake();
         }));
-        JButton singleScanButton = new JButton("SingleScan");
+        JButton singleScanButton = CompContext.registerComponent("SingleScan", new JButton());
 
         singleScanButton.addActionListener(OnceClickAction.of(e -> {
             try {
@@ -226,13 +226,12 @@ public class RuntimeScanPanel extends JPanel {
                 awtException.printStackTrace();
             }
         }));
-        JButton pauseScanBtn = new JButton("PauseScanning");
+        JButton pauseScanBtn = CompContext.registerComponent("PauseScanning", new JButton());
         pauseScanBtn.addActionListener(OnceClickAction.of(e -> {
             ctrlLoopThreadComp.pause();
         }));
-        checkBoxSaveScreenshot = new JCheckBox("SaveScreenshot");
-        checkBoxOverwrite = new JCheckBox("cover");
-        checkBoxOverwrite.setToolTipText("如果选中此选项, 如果文件夹中存在同名文件,则覆盖");
+        checkBoxSaveScreenshot = CompContext.registerComponent("SaveScreenshot", new JCheckBox());
+        checkBoxOverwrite = CompContext.registerComponent("cover", new JCheckBox());
         JToolBar toolBar = new JToolBar();
         toolBar.add(singleScanButton, 0);
         toolBar.add(startOrWakeButton, 1);

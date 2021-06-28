@@ -19,16 +19,16 @@ import java.io.IOException;
  **/
 public class JbgPanel extends JPanel {
 
-    private JScrollPane sp;
+    private final JScrollPane sp;
 
     @Getter
-    private JComponent component;
+    private final JComponent component;
 
     @Getter
     private Image image;
 
     @Getter
-    private boolean scroll;
+    private final boolean scroll;
 
     @Override
     public void paint(Graphics g) {
@@ -68,7 +68,7 @@ public class JbgPanel extends JPanel {
         this.image = image;
     }
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         JFrame frame = new JFrame();
         final BufferedImage image = ImageIO.read(FileSystemUtils.findFile("classpath:log-area.jpg"));
         final JbgPanel jbgPanel = new JbgPanel(image, new JTextArea(), true);

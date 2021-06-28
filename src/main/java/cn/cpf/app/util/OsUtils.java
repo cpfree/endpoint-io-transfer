@@ -17,7 +17,8 @@ import java.io.IOException;
  **/
 public class OsUtils {
 
-    private OsUtils(){}
+    private OsUtils() {
+    }
 
     /**
      * 从剪切板获得图片。

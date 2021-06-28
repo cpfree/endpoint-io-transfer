@@ -15,7 +15,8 @@ import java.util.Properties;
  **/
 public class ConfigHelper {
 
-    private ConfigHelper(){}
+    private ConfigHelper() {
+    }
 
     private static Properties getProperties() throws IOException {
         return PropsUtil.loadProps("suitpath:conf.properties");

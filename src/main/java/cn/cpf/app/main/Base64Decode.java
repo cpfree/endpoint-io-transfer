@@ -37,7 +37,7 @@ public class Base64Decode {
             throw new FileSystemException("不是文件 ==> " + filePath);
         }
         final String savePath = lineArgs.getDefaultParam("d", file.getParentFile().getPath() + File.separator + "base64.zip");
-        try(FileReader reader = new FileReader(file)) {
+        try (FileReader reader = new FileReader(file)) {
             char[] chars = new char[(int) file.length()];
             final int read = reader.read(chars);
             LogUtils.printDebug("读取文件长度: {}", read);

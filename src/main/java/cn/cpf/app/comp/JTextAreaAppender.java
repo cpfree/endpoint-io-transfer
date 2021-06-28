@@ -29,7 +29,7 @@ import java.io.Serializable;
  * 构造函数：除了使用父类的以外，也可以增加一些自己的配置。
  * 重写append()方法：这里面需要实现具体的逻辑，日志的去向。
  * createAppender()方法：主要是接收log4j2.xml中的配置项。
- *
+ * <p>
  * 若此类失效, 则看下配置文件是否被正确读入, 编译classpath路径下是否有log4j文件
  */
 @Plugin(name = "JTextAreaAppender", category = "Core", elementType = "appender", printObject = true)
@@ -39,7 +39,7 @@ public class JTextAreaAppender extends AbstractAppender {
     protected final JTextPane jTextPane;
 
     public JTextAreaAppender(String name, Filter filter, Layout<? extends Serializable> layout,
-                                final boolean ignoreExceptions, JTextPane jTextPane) {
+                             final boolean ignoreExceptions, JTextPane jTextPane) {
         super(name, filter, layout, ignoreExceptions, Property.EMPTY_ARRAY);
         this.jTextPane = jTextPane;
 

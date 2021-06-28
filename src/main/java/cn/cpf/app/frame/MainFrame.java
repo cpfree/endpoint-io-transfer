@@ -1,6 +1,7 @@
 package cn.cpf.app.frame;
 
 import cn.cpf.app.comp.JTextAreaAppender;
+import cn.cpf.app.global.CompContext;
 import cn.cpf.app.util.LogUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -69,16 +70,17 @@ public class MainFrame extends JFrame {
         setJMenuBar(menuBar);
         // 添加面板
         contentPane = new MainFramePanel();
+        contentPane.setPreferredSize(new Dimension(700, 600));
         contentPane.setVisible(true);
         setContentPane(contentPane);
+        CompContext.changeLang("cn");
         pack();
         contentPane.getSplitPane().setResizeWeight(0.5);
         contentPane.getSplitPane().setDividerLocation(0.7);
-
         // 窗口变化事件
         addWindowStateListener(e -> {
             final int newState = e.getNewState();
-            if(newState != e.getOldState()){
+            if (newState != e.getOldState()) {
                 switch (newState) {
                     case Frame.MAXIMIZED_BOTH:
                         log.debug("最大化");

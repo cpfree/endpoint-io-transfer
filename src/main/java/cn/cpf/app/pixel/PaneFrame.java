@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class PaneFrame extends JFrame {
 
     private JEditorPane newsPane;
-    private String newsURL = "http://www.baidu.com";
+    private final String newsURL = "http://www.baidu.com";
 
     public PaneFrame() {
 
@@ -42,7 +42,7 @@ public class PaneFrame extends JFrame {
         logger.severe("process will be terminated...");
 
         newsPane.addHyperlinkListener(e -> {
-            if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 Desktop browser = Desktop.getDesktop();
                 try {
                     logger.info("logger  " + e.getURL().toURI().getPath());

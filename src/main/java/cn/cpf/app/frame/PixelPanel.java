@@ -1,5 +1,6 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.global.CompContext;
 import com.github.cosycode.bdmp.BdmpHandle;
 import com.github.cosycode.ext.swing.comp.JPathTextField;
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class PixelPanel extends JPanel {
         this.setBackground(null);
         this.setOpaque(false);
 
-        btnOpen = new JButton("OPEN");
+        btnOpen = CompContext.registerComponent("SelectFile", new JButton());
         btnOpen.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -57,9 +58,8 @@ public class PixelPanel extends JPanel {
             }
         });
 
-        btnConvert = new JButton("转换");
+        btnConvert = CompContext.registerComponent("convertToBdmp", new JButton());
         btnConvert.addActionListener(e -> {
-            log.debug("btnConvert click");
             String pathText = tfPath.getText();
             if (StringUtils.isBlank(pathText)) {
                 return;

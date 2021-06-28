@@ -2,16 +2,18 @@ package cn.cpf.app.global;
 
 import com.github.cosycode.common.ext.hub.Throws;
 import com.github.cosycode.common.util.io.PropsUtil;
+import com.github.cosycode.ext.swing.comp.JField;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.function.BiConsumer;
 
 /**
  * <b>Description : </b> 管理组件的类
@@ -21,55 +23,91 @@ import java.util.function.BiConsumer;
  * @author CPF
  * @since 1.0
  **/
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CompContext {
 
     private static String lang = "en";
 
-    public static Properties langProperties = null;
+    private static Properties langProperties = null;
 
-    public static List<CompBean<?>> compBeanList = null;
+    private static List<CompBean<?>> compBeanList = null;
 
-    public static String getLangString(String key) throws IOException {
+    public static String getLangString(String key) {
         if (langProperties == null) {
-            langProperties = PropsUtil.loadProps(lang + ".properties");
+            langProperties = Throws.fun("suitpath:lang/" + lang + ".properties", PropsUtil::loadProps).runtimeExp().value();
         }
-        return langProperties.getProperty(key, key);
+        return langProperties.getProperty(key);
     }
 
+    /**
+     * 组件绑定类, 用于封装绑定的组件
+     *
+     * @param <T>
+     */
     @AllArgsConstructor
-    static class CompBean<T extends JComponent> {
+    public abstract static class CompBean<T extends JComponent> {
+        public CompBean() {
+            this.key = null;
+            this.component = null;
+        }
+
+        public static String getLangString(String key) {
+            return CompContext.getLangString(key);
+        }
+
         public final String key;
+
         public final T component;
-        public final BiConsumer<String, T> biConsumer;
-        public void check() {
-            biConsumer.accept(key, component);
-        }
+
+        public abstract void check();
     }
 
-    public static final BiConsumer<String, JButton> buttonBiConsumer = (key, button) -> {
-        Throws.run(() -> {
-            String text = getLangString(key);
-            button.setText(text);
-            Optional.ofNullable(getLangString(key + ".tip")).ifPresent(button::setToolTipText);
-        });
-    };
-
-    public static <T extends JComponent> void register(String key, T component) {
-        if (component instanceof JButton) {
-            register(key, (JButton)component, buttonBiConsumer);
-        } else {
-            register(key, component, null);
+    /**
+     * 将 key 和组件 comp 绑定起来, 方便对 comp 的行为的统一管理.
+     *
+     * @param key 组建绑定的key
+     * @param comp 创建的组件
+     * @param <T> 组件类型
+     * @return comp
+     */
+    public static <T extends JComponent> T registerComponent(String key, T comp) {
+        if (comp instanceof AbstractButton) {
+            CompBean<AbstractButton> jButtonCompBean = new CompBean<AbstractButton>(key, (AbstractButton) comp) {
+                public void check() {
+                    String text = getLangString(key);
+                    component.setText(StringUtils.isBlank(text) ? key : text);
+                    Optional.ofNullable(getLangString(key + ".tip")).filter(StringUtils::isNotBlank).ifPresent(component::setToolTipText);
+                }
+            };
+            register(jButtonCompBean);
+        } else if (comp instanceof JField) {
+            CompBean<JField> jFieldCompBean = new CompBean<JField>(key, (JField) comp) {
+                public void check() {
+                    String text = getLangString(key);
+                    component.getJLabel().setText(StringUtils.isBlank(text) ? key : text);
+                    Optional.ofNullable(getLangString(key + ".tip")).filter(StringUtils::isNotBlank).ifPresent(component::setToolTipText);
+                }
+            };
+            register(jFieldCompBean);
         }
+        return comp;
     }
 
-    public static <T extends JComponent> void register(String key, T component, BiConsumer<String, T> biConsumer) {
+    /**
+     * 注册组件
+     */
+    public static <T extends JComponent> void register(@NonNull CompBean<T> jButtonCompBean) {
         if (compBeanList == null) {
             compBeanList = new ArrayList<>();
         }
-        compBeanList.add(new CompBean<>(key, component, biConsumer));
+        compBeanList.add(jButtonCompBean);
     }
 
+    /**
+     * 改变组件的语言
+     *
+     * @param string 语言标记
+     */
     public static void changeLang(String string) {
         lang = string;
         langProperties = null;

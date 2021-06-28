@@ -2,6 +2,27 @@
 
 终端io传输工具, 方便远程终端设备的输入输出
 
+- 输入: 先将文件转换为Base64编码,再通过文本打印功能将Base64编码输入至远程, 在远程再将Base64编码转换为文件
+- 输出: 远程通过 remote-tool 将数据 转化为 bdmp 图片在屏幕上进行显示, 之后本地 endpoint-io-transfer 程序通过识别屏幕显示的图片, 将图片还原成文件.
+
+> bdmp 图片详细请查看
+> - <https://github.com/cosycode/bit-data-map>
+> - <https://gitee.com/cosycode/bit-data-map>
+
+## 功能介绍
+
+1. 文本打印功能
+   
+
+## 环境准备
+
+1. 该程序是使用Java1.8编写的jar程序, 请在本机和远程均安装并配置好JRE1.8运行环境.
+2. 本地 获取 endpoint-io-transfer 执行程序.
+3. 远程 上传 remote-tool 执行程序.
+   > 如果没有上传渠道, 可以使用 endpoint-io-transfer 的 **文本打印功能** 上传文件
+4. 
+
+
 ## 使用方式
 
 ### 一, 系统环境准备
@@ -35,15 +56,3 @@ remote-tool的功能有
 3. 如果参数路径指向文件, 则将文件转换为 bit-data-map 并显示, 如果参数是文件夹, 则遍历文件夹里面的文件, 并按照配置的时间间隔循环显示.
 
     command: `java -cp remote-tool.jar cn.cpf.man.ShowFrameWithPixelPngForFile -p ${文件或文件夹路径} -r 800 -px 2 -m 20 -inv 2000 -maxLen 300000`
-
-2. 安装好JDK之后, 启动运行 endpoint-io-transfer.jar, 测试 文本打印功能, 详情请看文本打印功能.
-   
-3. 
-
-
-
-
-
-
-
-

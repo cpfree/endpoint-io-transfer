@@ -1,5 +1,6 @@
 package cn.cpf.app.frame;
 
+import cn.cpf.app.global.CompContext;
 import com.github.cosycode.common.ext.hub.LazySingleton;
 import com.github.cosycode.common.ext.hub.SimpleCode;
 import com.github.cosycode.common.thread.AsynchronousProcessor;
@@ -20,6 +21,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -33,35 +36,41 @@ public class KeyInputPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final JButton btnOpen = new JButton("open");
+    private final JButton btnOpen = CompContext.registerComponent("selectFile", new JButton());
 
-    private final JButton btnRead = new JButton("read");
+    private final JButton btnRead = CompContext.registerComponent("printRead", new JButton());
 
-    private final JButton btnReadForBase64 = new JButton("BaseConvertRead");
+    private final JButton btnReadForBase64 = CompContext.registerComponent("printReadWithBase64", new JButton());
 
     @Getter
     private final JTextField tfPath = new JPathTextField();
 
-    private final JButton btnStart = new JButton("start print");
+    private final JButton btnStart = CompContext.registerComponent("PrintStart", new JButton());
 
-    private final JButton btnStop = new JButton("pause");
+    private final JButton btnStop = CompContext.registerComponent("printPause", new JButton());
 
-    private final JButton btnClear = new JButton("清空");
-
-    @Getter
-    private final JField interval = new JField("interval");
+    private final JButton btnClear = CompContext.registerComponent("PrintClear", new JButton());
 
     @Getter
-    private final JField prepareTime = new JField("prepareTime");
+    private final JField jfInterval = CompContext.registerComponent("interval", new JField("interval"));
 
     @Getter
-    private final JField jfLength = new JField("length", true);
+    private final JField jfPrepareTime = CompContext.registerComponent("prepareTime", new JField("prepareTime"));
 
     @Getter
-    private final JField progress = new JField("progress", true);
+    private final JField jfLength = CompContext.registerComponent("length", new JField("length", true));
 
     @Getter
-    private final JTextArea textArea = new JTextArea();
+    private final JField jfProgress = CompContext.registerComponent("progress", new JField("progress", true));
+
+    @Getter
+    private final JField jfStartTime = CompContext.registerComponent("startTime", new JField("startTime", true));
+
+    @Getter
+    private final JField jfTimeLeft = CompContext.registerComponent("timeLeft", new JField("timeLeft", true));
+
+    @Getter
+    private final JTextArea jfTextArea = new JTextArea();
 
     private static final LazySingleton<KeyPressDecorator> robotLazySingleton = LazySingleton.of(() -> {
         try {
@@ -85,15 +94,17 @@ public class KeyInputPanel extends JPanel {
 
         addListener();
 
-        interval.setText("10");
-        prepareTime.setText("5000");
+        jfInterval.setText("10");
+        jfPrepareTime.setText("5000");
 
         JPanel showPane = new JPanel();
-        showPane.setLayout(new GridLayout(2, 2, 15, 15));
-        showPane.add(interval);
-        showPane.add(prepareTime);
+        showPane.setLayout(new GridLayout(3, 2, 15, 15));
+        showPane.add(jfInterval);
+        showPane.add(jfPrepareTime);
         showPane.add(jfLength);
-        showPane.add(progress);
+        showPane.add(jfProgress);
+        showPane.add(jfStartTime);
+        showPane.add(jfTimeLeft);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 5, 5, 5));
@@ -115,10 +126,10 @@ public class KeyInputPanel extends JPanel {
 
         add(boardPane, BorderLayout.NORTH);
 
-        textArea.setAutoscrolls(true);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        JScrollPane jScrollPane = new JScrollPane(textArea);
+        jfTextArea.setAutoscrolls(true);
+        jfTextArea.setLineWrap(true);
+        jfTextArea.setWrapStyleWord(true);
+        JScrollPane jScrollPane = new JScrollPane(jfTextArea);
         // 分别设置水平和垂直滚动条自动出现
         jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -154,7 +165,7 @@ public class KeyInputPanel extends JPanel {
             }
             try {
                 final String text = DataConvertUtils.fileToBase64(file);
-                textArea.setText(text);
+                jfTextArea.setText(text);
             } catch (IOException ex) {
                 log.error("读取文件失败", ex);
             }
@@ -173,13 +184,13 @@ public class KeyInputPanel extends JPanel {
             try {
                 String text = IoUtils.readStringFromInputStream(new FileInputStream(file));
                 text = text.replaceAll("(?<!\r)\n", "\r\n");
-                textArea.setText(text);
+                jfTextArea.setText(text);
             } catch (IOException ex) {
                 log.error("读取文件失败", ex);
             }
         });
 
-        textArea.getDocument().addDocumentListener(new DocumentListener(){
+        jfTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 changed();
@@ -191,14 +202,14 @@ public class KeyInputPanel extends JPanel {
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e){
+            public void changedUpdate(DocumentEvent e) {
                 // 当attribute改变时触发
                 // 有待继续探索......
                 log.debug("changedUpdate");
             }
 
             private void changed() {
-                int length = textArea.getText().getBytes().length;
+                int length = jfTextArea.getText().getBytes().length;
                 jfLength.setText(String.valueOf(length));
             }
         });
@@ -206,19 +217,19 @@ public class KeyInputPanel extends JPanel {
         btnStart.addActionListener(e -> {
             log.debug("准备打印, 请找寻焦点, 并将输入法调至英文");
             // 等待时间
-            int sleepTime = prepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false));
+            int sleepTime = jfPrepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false));
             if (sleepTime < 2000 || sleepTime > 30000) {
                 log.warn("等待时间需要在 2000 - 30000 以内");
                 return;
             }
             // 字符打印时间间隔
-            final int intervalTime = interval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false));
+            final int intervalTime = jfInterval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false));
             if (intervalTime < 3 || intervalTime > 1000) {
                 log.warn("等待时间需要在 3 - 1000 以内");
                 return;
             }
 
-            final String text = textArea.getText().replace("\r\n", "\n");
+            final String text = jfTextArea.getText().replace("\r\n", "\n");
             int length = text.length();
             if (length > 0) {
                 new Thread(() -> {
@@ -226,19 +237,21 @@ public class KeyInputPanel extends JPanel {
                     AsynchronousProcessor<Character> asynchronousProcessor = instance.getAsynchronousProcessor();
                     asynchronousProcessor.wake();
                     asynchronousProcessor.setMillisecond(intervalTime);
+                    jfStartTime.setText(LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME));
                     // 打印之前等待5秒, 为了找寻打印的焦点
                     SimpleCode.runtimeException(() -> Thread.sleep(sleepTime));
                     // 打印
                     instance.print(text);
-                    // 每隔 20 mm, 更新打印进度
+                    // 每隔 50 mm, 更新打印进度
                     BlockingQueue<Character> queue = asynchronousProcessor.getBlockingQueue();
                     while (!queue.isEmpty()) {
                         int size = queue.size();
-                        progress.setText((length - size) + " / " + length);
-                        SimpleCode.runtimeException(() -> Thread.sleep(20));
+                        jfProgress.setText((length - size) + " / " + length);
+                        jfTimeLeft.setText(String.valueOf(size * intervalTime / 1000));
+                        SimpleCode.runtimeException(() -> Thread.sleep(50));
                     }
-                    progress.setText(length + " / " + length);
-                    log.info( "{} :: 进度线程结束", Thread.currentThread().getName());
+                    jfProgress.setText(length + " / " + length);
+                    log.info("{} :: 进度线程结束", Thread.currentThread().getName());
                 }).start();
             }
         });
@@ -248,13 +261,13 @@ public class KeyInputPanel extends JPanel {
             if (asynchronousProcessor.isSuspend()) {
                 log.debug("准备打印, 请找寻焦点, 并将输入法调至英文");
                 // 等待时间
-                int sleepTime = prepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false));
+                int sleepTime = jfPrepareTime.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 500, "prepareTime 转换失败", false));
                 if (sleepTime < 2000 || sleepTime > 30000) {
                     log.warn("等待时间需要在 2000 - 30000 以内");
                     return;
                 }
                 // 字符打印时间间隔
-                final int intervalTime = interval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false));
+                final int intervalTime = jfInterval.get(s -> SimpleCode.simpleException(() -> Integer.parseInt(s), 10, "intervalTime 转换失败", false));
                 if (intervalTime < 3 || intervalTime > 1000) {
                     log.warn("等待时间需要在 3 - 1000 以内");
                     return;
@@ -263,7 +276,7 @@ public class KeyInputPanel extends JPanel {
                     SimpleCode.runtimeException(() -> Thread.sleep(sleepTime));
                     asynchronousProcessor.setMillisecond(intervalTime);
                     asynchronousProcessor.wake();
-                    log.debug( "{} :: 线程已经被唤醒", Thread.currentThread().getName());
+                    log.debug("{} :: 线程已经被唤醒", Thread.currentThread().getName());
                 }).start();
                 btnStop.setText("pause");
             } else {
@@ -273,7 +286,7 @@ public class KeyInputPanel extends JPanel {
         });
 
         btnClear.addActionListener(e -> {
-            textArea.setText("");
+            jfTextArea.setText("");
             robotLazySingleton.instance().getAsynchronousProcessor().getBlockingQueue().clear();
         });
     }

@@ -13,7 +13,8 @@ import org.slf4j.event.Level;
 @Slf4j
 public class LogUtils {
 
-    private LogUtils(){}
+    private LogUtils() {
+    }
 
     /**
      * 1: log, 0: 控制台

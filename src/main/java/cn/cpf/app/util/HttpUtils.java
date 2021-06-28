@@ -32,6 +32,7 @@ public class HttpUtils {
 
     /**
      * CURL 发送请求
+     *
      * @param url
      * @return
      */
@@ -61,7 +62,7 @@ public class HttpUtils {
 
     public static boolean download(String url, File savePath, LongBinaryOperator longBinaryOperator) {
         Objects.requireNonNull(savePath);
-        CloseableHttpClient client= HttpClients.custom()
+        CloseableHttpClient client = HttpClients.custom()
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
         // cookie时间可能会出错，设置下
@@ -74,7 +75,7 @@ public class HttpUtils {
             if (!savePath.exists()) {
                 FileSystemUtils.insureFileDirExist(savePath.getParentFile());
             }
-            try (InputStream is = entity.getContent(); OutputStream outputStream = new FileOutputStream(savePath)){
+            try (InputStream is = entity.getContent(); OutputStream outputStream = new FileOutputStream(savePath)) {
                 // 根据实际运行效果 设置缓冲区大小
                 final int cache = 8 * 1024;
                 byte[] buffer = new byte[cache];
@@ -98,6 +99,7 @@ public class HttpUtils {
 
     /**
      * 从输入流转向输出流
+     *
      * @param inputStream
      * @param outputStream
      * @param longConsumer

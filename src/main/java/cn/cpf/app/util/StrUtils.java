@@ -8,7 +8,8 @@ package cn.cpf.app.util;
  **/
 public class StrUtils {
 
-    private StrUtils(){}
+    private StrUtils() {
+    }
 
     public static String format(String str, Object... objects) {
         if (objects == null || objects.length == 0) {
