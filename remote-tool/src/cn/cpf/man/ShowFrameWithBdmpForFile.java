@@ -20,7 +20,7 @@ import java.io.IOException;
  * @author CPF
  * @since 1.0
  **/
-public class ShowFrameWithPixelPngForFile {
+public class ShowFrameWithBdmpForFile {
 
     /**
      * @param args -p 文件或文件夹路径
@@ -60,7 +60,7 @@ public class ShowFrameWithPixelPngForFile {
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
-        }, file2 -> file2.isDirectory() || file2.length() < maxLen);
+        }, file2 -> file2.isDirectory() || file2.length() <= maxLen);
     }
 
 }
