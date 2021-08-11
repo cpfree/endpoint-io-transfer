@@ -1,17 +1,22 @@
 package cn.cpf.util;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/11/6
  *
  * @author CPF
- * @date 2020/11/6 17:58
+ * @since 1.0
  **/
 public class ImageSlideShowFrame extends JFrame {
 
@@ -49,8 +54,6 @@ public class ImageSlideShowFrame extends JFrame {
         Rectangle bounds = new Rectangle(screenSize);
         setBounds(bounds);
         setSize(screenSize);
-        setExtendedState(Frame.MAXIMIZED_BOTH);
-        setVisible(true);
     }
 
     /**
@@ -83,5 +86,14 @@ public class ImageSlideShowFrame extends JFrame {
         label.setIcon(new ImageIcon(image));
     }
 
+    public static void main(String[] args) throws IOException {
+        final BufferedImage image = ImageIO.read(new File("D:\\Users\\CPF\\Pictures\\信息\\英语音标.JPG"));
+        // 显示图像
+        ImageSlideShowFrame frame = new ImageSlideShowFrame();
+        frame.setPixelImage(image);
+        frame.suitSize();
+//        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
+    }
 
 }
