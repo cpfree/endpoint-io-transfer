@@ -12,15 +12,16 @@ import com.github.cosycode.ext.swing.comp.JPathTextField;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.mozilla.universalchardet.UniversalDetector;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.border.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
@@ -182,7 +183,9 @@ public class KeyInputPanel extends JPanel {
                 return;
             }
             try {
-                String text = IoUtils.readStringFromInputStream(new FileInputStream(file));
+                String encoding = UniversalDetector.detectCharset(file);
+                FileInputStream inputStream = new FileInputStream(file);
+                String text = IoUtils.readStringFromInputStream(inputStream, Charset.forName(encoding));
                 text = text.replaceAll("(?<!\r)\n", "\r\n");
                 jfTextArea.setText(text);
             } catch (IOException ex) {

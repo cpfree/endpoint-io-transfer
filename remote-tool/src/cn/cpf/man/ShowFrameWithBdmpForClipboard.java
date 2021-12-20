@@ -57,6 +57,7 @@ public class ShowFrameWithBdmpForClipboard {
         ImageSlideShowFrame frame = new ImageSlideShowFrame();
         frame.setPixelImage(image);
         frame.suitSize();
+        frame.setVisible(true);
     }
 
 

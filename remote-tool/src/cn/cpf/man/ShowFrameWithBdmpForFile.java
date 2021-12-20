@@ -54,6 +54,7 @@ public class ShowFrameWithBdmpForFile {
                 final BufferedImage bufferedImage = BdmpHandle.convertFileToBdmp(file1, rowPxNum, pxWidth, margin, (byte) powerOf2);
                 pixelGenerateFrame.setPixelImage(bufferedImage);
                 pixelGenerateFrame.suitSize();
+                pixelGenerateFrame.setVisible(true);
                 if (file.isDirectory()) {
                     Thread.sleep(interval);
                 }
